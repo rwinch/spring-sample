@@ -1,0 +1,17 @@
+def home = System.properties['user.home']
+
+task synch(type:Sync) {
+    destinationDir = file("${home}/tmp/jira/")
+    fileMode = 0755
+    from(projectDir)
+    into(destinationDir)
+    exclude 'build.gradle', '*~', 'target', 'build', '.*'
+}
+
+task dist(type:Zip) {
+    destinationDir = file("${home}/tmp/")
+    baseName = 'demo'
+    fileMode = 0755
+    from(projectDir)
+    exclude 'build.gradle', '*~', 'target', 'build', '.*'
+}
