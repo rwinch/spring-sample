@@ -6,3 +6,4 @@ bin
 .project
 *~
 .springBeans
+.gradle
