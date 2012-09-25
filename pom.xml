@@ -63,7 +63,7 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
       <scope>compile</scope>
-      <version>${spring.version}</version>
+      <version>${spring.security.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
