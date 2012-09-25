@@ -13,6 +13,6 @@ To run the sample application you must have Maven 3 installed. After doing so yo
 
     mvn package cargo:run 
 
-* Open http://localhost:8080/jira/ in your browser
+* Open http://localhost:8080/sample/ in your browser
 * You can log in with user/password or admin/password
 * To stop the container use Ctrl-C from the commandline
