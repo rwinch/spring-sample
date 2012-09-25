@@ -1,4 +1,4 @@
-package com.test.security;
+package org.springframework.security.sample;
 
 import java.util.Locale;
 
