@@ -1,17 +1,18 @@
 def home = System.properties['user.home']
 
 task synch(type:Sync) {
-    destinationDir = file("${home}/tmp/jira/")
+    destinationDir = file("${home}/tmp/sample/")
     fileMode = 0755
     from(projectDir)
     into(destinationDir)
-    exclude 'build.gradle', '*~', 'target', 'build', '.*'
+    exclude 'build.gradle', '*~', 'target', 'build', '.*', 'bin'
 }
 
 task dist(type:Zip) {
     destinationDir = file("${home}/tmp/")
-    baseName = 'demo'
+    baseName = 'sample'
     fileMode = 0755
     from(projectDir)
-    exclude 'build.gradle', '*~', 'target', 'build', '.*'
+    into('sample')
+    exclude 'build.gradle', '*~', 'target', 'build', '.*', 'bin'
 }
