@@ -6,9 +6,10 @@
   <title>Home</title>
 </head>
 <body>
-<h1>Hello ${username}</h1>
-<sec:authorize access="isAuthenticated()">
+  <h1>Hello ${username}</h1>
+  <a href="${pageContext['request'].contextPath}/spring_security_login">Login</a>
   <a href="${pageContext['request'].contextPath}/j_spring_security_logout">Logout</a>
-</sec:authorize>
+  <a href="${pageContext['request'].contextPath}/writeSession">Write</a>
+  <a href="${pageContext['request'].contextPath}/readSession">readSession</a>
 </body>
 </html>

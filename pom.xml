@@ -10,7 +10,7 @@
   <properties>
     <java-version>1.6</java-version>
     <spring.version>3.1.2.RELEASE</spring.version>
-    <spring.security.version>3.1.2.RELEASE</spring.security.version>
+    <spring.security.version>2.0.4</spring.security.version>
     <org.aspectj-version>1.6.9</org.aspectj-version>
     <org.slf4j-version>1.5.10</org.slf4j-version>
   </properties>
@@ -61,25 +61,6 @@
 
     <dependency>
       <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-web</artifactId>
-      <scope>compile</scope>
-      <version>${spring.security.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-ldap</artifactId>
-      <scope>compile</scope>
-      <version>${spring.security.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-taglibs</artifactId>
       <scope>compile</scope>
       <version>${spring.security.version}</version>
@@ -90,31 +71,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-    <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-config</artifactId>
-        <scope>compile</scope>
-        <version>${spring.security.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-          <exclusion>
-            <artifactId>spring-web</artifactId>
-            <groupId>org.springframework</groupId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.openid4java</groupId>
-            <artifactId>openid4java-nodeps</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
 
     <!-- AspectJ -->
     <dependency>
