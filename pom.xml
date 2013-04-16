@@ -9,7 +9,7 @@
   <version>1.0.0-BUILD-SNAPSHOT</version>
   <properties>
     <java-version>1.6</java-version>
-    <spring.version>3.1.2.RELEASE</spring.version>
+    <spring.version>3.2.1.RELEASE</spring.version>
     <spring.security.version>3.1.2.RELEASE</spring.security.version>
     <org.aspectj-version>1.6.9</org.aspectj-version>
     <org.slf4j-version>1.5.10</org.slf4j-version>
@@ -193,6 +193,12 @@
     </dependency>
 
     <!-- Test -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
