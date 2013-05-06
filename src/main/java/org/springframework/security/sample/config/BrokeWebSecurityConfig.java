@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.security.sample.config.simple;
+package org.springframework.security.sample.config;
 
 import javax.servlet.Filter;
 
@@ -32,7 +32,7 @@ import org.springframework.security.sample.CustomAuthenticationManager;
  */
 @Import(DelegatingWebSecurityConfiguration.class)
 @Configuration
-public class SimpleWebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class BrokeWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomFilter customFilter;
 

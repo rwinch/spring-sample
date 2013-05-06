@@ -31,12 +31,14 @@ public class WebSecurityConfigurationSupport {
 
     @Bean
     public FilterChainProxy springSecurityFilterChain() {
+        // FilterChainProxy requires the AuthenticationManager to build
+        Assert.notNull(getAuthenticationManager(), "AuthenticationManager cannot be null");
+        // FilterChainProxy requires customFIlter to build
         Assert.notNull(getCustomFilter(), "custom filter is required");
         return new FilterChainProxy();
     }
 
     @Bean
-    @DependsOn("springSecurityFilterChain")
     public AuthenticationManager authenticationManager() {
         AuthenticationManager authenticationManager = getAuthenticationManager();
         Assert.notNull(authenticationManager, "AuthenticationManager cannot be null");

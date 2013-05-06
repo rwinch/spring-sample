@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.security.sample.config.broke;
+package org.springframework.security.sample.config;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.sample.config.simple.SimpleWebSecurityConfig;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -28,7 +27,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={BrokeWebSecurityConfig.class,CustomFilterConfig.class})
+@ContextConfiguration(classes = { BrokeWebSecurityConfig.class,
+        CustomFilterConfig.class })
 public class BrokeWebSecurityConfigTest {
     @Autowired
     private FilterChainProxy springSecurityFilterChain;
