@@ -13,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.security.sample.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.sample.CustomFilter;
+package sample;
 
 /**
  * @author Rob Winch
  *
  */
-@Configuration
-public class CustomFilterConfig {
+public interface Dao {
 
-    @Bean
-    public CustomFilter customFilter(AuthenticationManager authenticationManager) {
-        return new CustomFilter();
-    }
 }

@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.security.sample;
+package sample;
 
-import java.io.IOException;
+import javax.sql.DataSource;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.util.Assert;
 
 /**
  * @author Rob Winch
  *
  */
-public class CustomFilter extends OncePerRequestFilter {
+public class ServiceImpl implements Service {
 
-    protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        filterChain.doFilter(request, response);
+    public ServiceImpl(DataSource dataSource) {
+        Assert.notNull(dataSource, "dataSource cannot be null");
     }
 }

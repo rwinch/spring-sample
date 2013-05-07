@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2002-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.security.sample.config;
+package sample.config;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import sample.Dao;
+import sample.DaoImpl;
+import sample.Facade;
+import sample.FacadeImpl;
+import sample.Service;
+
 /**
- *
  * @author Rob Winch
  *
  */
 @Configuration
-public class MainConfig {
+public class DaoConfig {
+    @Autowired
+    private ServiceConfig serviceConfig;
+
+    @Bean
+    public Dao dao() {
+        return new DaoImpl(dataSource());
+    }
 
     @Bean(destroyMethod = "shutdown")
     public DataSource dataSource() {
@@ -37,4 +50,8 @@ public class MainConfig {
         return factory.getDatabase();
     }
 
+    @Bean
+    public Facade facade() {
+        return new FacadeImpl(serviceConfig.service());
+    }
 }

@@ -13,23 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.security;
-
-import javax.servlet.Filter;
-
-import org.springframework.security.authentication.AuthenticationManager;
+package sample;
 
 /**
  * @author Rob Winch
  *
  */
-public class WebSecurityConfigurerAdapter implements WebSecurityConfigurer {
+public interface Service {
 
-    public AuthenticationManager getAuthenticationManager() {
-        return null;
-    }
-
-    public Filter getCustomFilter() {
-        return null;
-    }
 }

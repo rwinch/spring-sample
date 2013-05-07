@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.security.sample;
+package sample;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.util.Assert;
 
 /**
  * @author Rob Winch
  *
  */
-public class CustomAuthenticationManager implements AuthenticationManager {
+public class FacadeImpl implements Facade {
 
-    public Authentication authenticate(Authentication authentication)
-            throws AuthenticationException {
-        throw new UnsupportedOperationException();
+    public FacadeImpl(Service service) {
+        Assert.notNull(service, "service cannot be null");
     }
 }
