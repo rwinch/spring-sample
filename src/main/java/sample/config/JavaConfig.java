@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample;
+package sample.config;
 
-import javax.sql.DataSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-import org.springframework.util.Assert;
+import sample.MyBeanDefinitionRegistrar;
 
 /**
  * @author Rob Winch
  *
  */
-public class ServiceImpl implements Service {
-
-    public ServiceImpl(DataSource dataSource) {
-        Assert.notNull(dataSource, "dataSource cannot be null");
+@Configuration
+@Import(MyBeanDefinitionRegistrar.class)
+public class JavaConfig {
+    @Bean
+    public String myBean() {
+        return "myBean";
     }
 }

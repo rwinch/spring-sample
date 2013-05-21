@@ -15,15 +15,22 @@
  */
 package sample;
 
-import org.springframework.util.Assert;
+import java.util.List;
 
 /**
  * @author Rob Winch
  *
  */
-public class FacadeImpl implements Facade {
+public class BeanDefinitionNames {
 
-    public FacadeImpl(Service service) {
-        Assert.notNull(service, "service cannot be null");
+    private List<String> beanNames;
+
+    public BeanDefinitionNames(List<String> beanNames) {
+        super();
+        this.beanNames = beanNames;
+    }
+
+    public List<String> getBeanNames() {
+        return beanNames;
     }
 }

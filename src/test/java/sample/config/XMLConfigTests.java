@@ -15,26 +15,28 @@
  */
 package sample.config;
 
-import javax.sql.DataSource;
+import static org.fest.assertions.Assertions.assertThat;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import sample.Service;
-import sample.ServiceImpl;
+import sample.BeanDefinitionNames;
 
 /**
  * @author Rob Winch
  *
  */
-@Configuration
-public class ServiceConfig {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:bdrpp.xml")
+public class XMLConfigTests{
     @Autowired
-    private DataSource dataSource;
+    private BeanDefinitionNames beanNames;
 
-    @Bean
-    public Service service() {
-        return new ServiceImpl(dataSource);
+    @Test
+    public void definitionRegistrarSeesMyBean() {
+        assertThat(beanNames.getBeanNames()).contains("myBean");
     }
 }

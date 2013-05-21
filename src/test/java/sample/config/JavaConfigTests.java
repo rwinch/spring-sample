@@ -13,24 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample;
+package sample.config;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import sample.config.DaoConfig;
-import sample.config.ServiceConfig;
+import sample.BeanDefinitionNames;
 
 /**
  * @author Rob Winch
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {DaoConfig.class, ServiceConfig.class})
-public class CircularTest {
+@ContextConfiguration(classes=JavaConfig.class)
+public class JavaConfigTests{
+    @Autowired
+    private BeanDefinitionNames beanNames;
 
     @Test
-    public void loadsConfig() {}
+    public void definitionRegistrarSeesMyBean() {
+        assertThat(beanNames.getBeanNames()).contains("myBean");
+    }
 }
