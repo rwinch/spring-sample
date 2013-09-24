@@ -11,8 +11,5 @@ To run the sample application you must have Maven 3 installed. After doing so yo
 * Navigate to the folder on the commandline
 * Execute
 
-    mvn package cargo:run 
+    mvn verify
 
-* Open http://localhost:8080/sample/ in your browser
-* You can log in with user/password or admin/password
-* To stop the container use Ctrl-C from the commandline
