@@ -9,17 +9,32 @@
   <version>1.0.0-BUILD-SNAPSHOT</version>
   <properties>
     <java-version>1.6</java-version>
-    <spring.version>3.1.2.RELEASE</spring.version>
-    <spring.security.version>3.1.2.RELEASE</spring.security.version>
     <org.aspectj-version>1.6.9</org.aspectj-version>
     <org.slf4j-version>1.5.10</org.slf4j-version>
   </properties>
+  <dependencyManagement>
+      <dependencies>
+          <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-framework-bom</artifactId>
+              <version>4.0.1.RELEASE</version>
+              <type>pom</type>
+              <scope>import</scope>
+          </dependency>
+          <dependency>
+              <groupId>org.springframework.security</groupId>
+              <artifactId>spring-security-bom</artifactId>
+              <version>3.2.0.RELEASE</version>
+              <type>pom</type>
+              <scope>import</scope>
+          </dependency>
+      </dependencies>
+  </dependencyManagement>
   <dependencies>
     <!-- Spring -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>${spring.version}</version>
       <exclusions>
         <!-- Exclude Commons Logging in favor of SLF4j -->
         <exclusion>
@@ -31,14 +46,12 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
       <scope>compile</scope>
-      <version>${spring.security.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
@@ -63,7 +76,6 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
       <scope>compile</scope>
-      <version>${spring.security.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
@@ -75,14 +87,12 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-ldap</artifactId>
       <scope>compile</scope>
-      <version>${spring.security.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-taglibs</artifactId>
       <scope>compile</scope>
-      <version>${spring.security.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
@@ -95,7 +105,6 @@
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-config</artifactId>
         <scope>compile</scope>
-        <version>${spring.security.version}</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
