@@ -8,7 +8,14 @@
 <body>
 <h1>Hello ${username}</h1>
 <sec:authorize access="isAuthenticated()">
-  <a href="${pageContext['request'].contextPath}/j_spring_security_logout">Logout</a>
+ <p><a href="${pageContext['request'].contextPath}/j_spring_security_logout">Logout</a></p>
+</sec:authorize>
+<sec:authorize access="uiAuthz('allevents','myVal')">
+  <p>myVal</p>
+</sec:authorize>
+
+<sec:authorize access="uiAuthz('allevents','allevents')">
+  <p>allevents</p>
 </sec:authorize>
 </body>
 </html>

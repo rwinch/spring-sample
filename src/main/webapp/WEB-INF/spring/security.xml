@@ -5,6 +5,7 @@
   http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
   <http use-expressions="true">
+    <expression-handler ref="webExpressionHandler"/>
     <intercept-url access="authenticated" pattern="/**" />
     <form-login/>
     <logout/>
@@ -19,4 +20,5 @@
     </authentication-provider>
   </authentication-manager>
 
+  <b:bean id="webExpressionHandler" class="org.springframework.security.sample.CustomExpressionHandler"/>
 </b:beans>
