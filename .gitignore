@@ -4,6 +4,8 @@ bin
 .classpath
 .settings
 .project
+.idea
 *~
 .springBeans
 .gradle
+*.iml
