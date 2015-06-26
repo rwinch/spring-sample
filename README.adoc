@@ -11,7 +11,7 @@ Specifically:
 * Navigate to the folder on the commandline
 * Execute
 
-	mvn spring-boot:run
+	mvn spring-boot:verify
 
 * Open http://localhost:8080/ in your browser
 * You can log in with user/password or admin/password

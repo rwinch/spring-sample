@@ -1,8 +1,10 @@
 package demo;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,30 +35,14 @@ public class SpringBootSecurityApplicationTests {
 				.build();
 	}
 
-	@Test
-	public void userDeniedForNoUser() throws Exception {
-		mockMvc.perform(get("/user/hello"))
-			.andExpect(status().isUnauthorized());
-	}
-
 	@WithMockUser
 	@Test
-	public void userAllowedUser() throws Exception {
-		mockMvc.perform(get("/user/hello"))
-			.andExpect(status().isOk());
-	}
-
-	@WithMockUser("evil")
-	@Test
-	public void userDeniedEvil() throws Exception {
-		mockMvc.perform(get("/user/hello"))
-			.andExpect(status().isForbidden());
-	}
-
-	@WithMockUser("evil")
-	@Test
-	public void evilAllowedEvil() throws Exception {
-		mockMvc.perform(get("/evil/hello"))
-			.andExpect(status().isOk());
+	public void spr13116() throws Exception {
+		mockMvc.perform(get("/"))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(cookie().exists("csrf"))
+			.andExpect(cookie().doesNotExist("JSESSIONID"))
+			.andExpect(cookie().exists("session"));
 	}
 }

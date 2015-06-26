@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.header.HeaderWriterFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -14,15 +15,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+			.addFilterBefore(new CookieFilter("session", "94FC8625AC6FFF3EAD6231D8B4037813"), HeaderWriterFilter.class)
+			.addFilterBefore(new CookieFilter("csrf", "0147f666-411d-4399-bccb-bd73490c68c2"), HeaderWriterFilter.class)
 			.authorizeRequests()
-				.antMatchers("/{username}/*").access(pathVariable("/{username}/*", "username") + "== authentication.name")
 				.anyRequest().authenticated()
 				.and()
 			.httpBasic();
-	}
-
-	private String pathVariable(String pattern, String name) {
-		return "@pathVariableEvaluator.extract(request,'"+pattern+"')['"+ name +"']";
 	}
 
 	@Autowired
