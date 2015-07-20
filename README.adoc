@@ -11,8 +11,8 @@ Specifically:
 * Navigate to the folder on the commandline
 * Execute
 
-	mvn spring-boot:verify
+	mvn spring-boot:run
 
-* Open http://localhost:8080/ in your browser
-* You can log in with user/password or admin/password
-* To stop the container use Ctrl-C from the commandline
+* Open http://localhost:8080/h2/
+* Accept the defaults and click *Connect*
+* Observe the H2 Console works
