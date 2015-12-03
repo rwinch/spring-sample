@@ -19,9 +19,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = SpringBootSecurityApplication.class)
+@SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
-public class SpringBootSecurityApplicationTests {
+public class ApplicationTests {
 	@Autowired
 	WebApplicationContext context;
 
@@ -35,14 +35,16 @@ public class SpringBootSecurityApplicationTests {
 				.build();
 	}
 
+	@Test
+	public void requiresLogin() throws Exception {
+		mockMvc.perform(get("/"))
+			.andExpect(status().is3xxRedirection());
+	}
+
 	@WithMockUser
 	@Test
-	public void spr13116() throws Exception {
+	public void authenticatedWorks() throws Exception {
 		mockMvc.perform(get("/"))
-			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(cookie().exists("csrf"))
-			.andExpect(cookie().doesNotExist("JSESSIONID"))
-			.andExpect(cookie().exists("session"));
+			.andExpect(status().is2xxSuccessful());
 	}
 }
