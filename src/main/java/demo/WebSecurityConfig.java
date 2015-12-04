@@ -15,6 +15,7 @@
  */
 package demo;
 
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -25,4 +26,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+	/* (non-Javadoc)
+	 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)
+	 */
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+			.exceptionHandling()
+				.authenticationEntryPoint(new ContinueEntryPoint("/login"))
+				.and()
+			.authorizeRequests()
+				.antMatchers("/login").permitAll()
+				.anyRequest().authenticated()
+				.and()
+			.formLogin();
+	}
 }

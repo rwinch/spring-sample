@@ -3,8 +3,7 @@ package demo;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +31,7 @@ public class ApplicationTests {
 		mockMvc = MockMvcBuilders
 				.webAppContextSetup(context)
 				.apply(springSecurity())
+//				.alwaysDo(print())
 				.build();
 	}
 
@@ -45,6 +45,55 @@ public class ApplicationTests {
 	@Test
 	public void authenticatedWorks() throws Exception {
 		mockMvc.perform(get("/"))
+			.andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	public void loginNotAuthenticated() throws Exception {
+		mockMvc.perform(get("/login").param("continue", "/"))
+			.andExpect(status().is2xxSuccessful());
+	}
+
+	@WithMockUser
+	@Test
+	public void loginContinueIsNull() throws Exception {
+		mockMvc.perform(get("/login"))
+			.andExpect(status().is2xxSuccessful());
+	}
+
+	@WithMockUser
+	@Test
+	public void loginContinueIsSlash() throws Exception {
+		mockMvc.perform(get("/login").param("continue", "/"))
+			.andExpect(redirectedUrl("/"));
+	}
+
+	@WithMockUser
+	@Test
+	public void loginContinueIsUrl() throws Exception {
+		mockMvc.perform(get("/login").param("continue", "/other"))
+			.andExpect(redirectedUrl("/other"));
+	}
+
+	@WithMockUser
+	@Test
+	public void loginContinueStartsWithDoubleSlash() throws Exception {
+		mockMvc.perform(get("/login").param("continue", "//google.com"))
+			.andExpect(status().is2xxSuccessful());
+	}
+
+	@WithMockUser
+	@Test
+	public void loginContinueStartsWithHttpScheme() throws Exception {
+		mockMvc.perform(get("/login").param("continue", "http://google.com"))
+			.andExpect(status().is2xxSuccessful());
+	}
+
+
+	@WithMockUser
+	@Test
+	public void loginContinueStartsWithHttpsScheme() throws Exception {
+		mockMvc.perform(get("/login").param("continue", "https://google.com"))
 			.andExpect(status().is2xxSuccessful());
 	}
 }
