@@ -4,15 +4,19 @@ Your are likely viewing this because you have submitted a forum question or a JI
 
 == Running from the commandline
 
-To run the sample application you must have Maven 3 installed.
+To run the sample application you must have JDK8 installed.
 After doing so you can easily run the application using the Spring Boot plugin.
 Specifically:
 
 * Navigate to the folder on the commandline
-* Execute
+* For Linux execute
 
-	mvn spring-boot:verify
+	./mvnw spring-boot:run
+
+* For Windows execute
+
+	.\mvnw.bat spring-boot:run
 
 * Open http://localhost:8080/ in your browser
-* You can log in with user/password or admin/password
+* You can log in with user/password
 * To stop the container use Ctrl-C from the commandline
