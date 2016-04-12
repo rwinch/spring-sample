@@ -15,14 +15,16 @@
  */
 package demo;
 
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- * @author Rob Winch
- *
- */
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@RestController
+@PreAuthorize("hasRole('ADMIN')")
+public class AdminController {
 
+	@RequestMapping("/admin/")
+	public String index() {
+		return "Admin";
+	}
 }

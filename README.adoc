@@ -16,3 +16,8 @@ Specifically:
 * Open http://localhost:8080/ in your browser
 * You can log in with user/password or admin/password
 * To stop the container use Ctrl-C from the commandline
+
+
+The URL http://localhost:8080/ is visible by either user or admin
+
+The URL http://localhost:8080/admin/ is only allowed for admin
