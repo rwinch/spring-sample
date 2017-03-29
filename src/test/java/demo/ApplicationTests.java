@@ -1,5 +1,6 @@
 package demo;
 
+import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +16,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest
+@WebMvcTest({HomeController.class, SecurityConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApplicationTests {
 	@Rule
@@ -24,10 +25,15 @@ public class ApplicationTests {
 	@Autowired
 	WebClient webClient;
 
-	@WithMockUser
+	@After
+	public void cleanup() {
+		webClient.getCookieManager().clearCookies();
+	}
+
+	@WithMockUser(roles = {"LICENSOR"})
 	@Test
 	public void authenticated() throws Exception {
-		 webClient.getPage("/bookings/new");
+		webClient.getPage("/bookings/new");
 	}
 
 	@Test
