@@ -1,9 +1,11 @@
 package demo;
 
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -14,6 +16,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApplicationTests {
 	@Rule
 	public final ExpectedException thrown = ExpectedException.none();
@@ -26,7 +29,6 @@ public class ApplicationTests {
 	public void authenticated() throws Exception {
 		 webClient.getPage("/bookings/new");
 	}
-
 
 	@Test
 	public void notAuthenticated() throws Exception {
