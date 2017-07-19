@@ -15,9 +15,12 @@
  */
 package demo;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * @author Rob Winch
@@ -26,11 +29,21 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+	/**
+	 * Map all usernames extracted from the X509 to a valid user. You can customize this if you want.
+	 * @return
+	 */
+	@Bean
+	public UserDetailsService userDetailsService() {
+		return username -> User.withUsername(username).password("NOT-USED").roles("USER").build();
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.httpBasic().and()
-			.cors().and()
+			.x509()
+				.subjectPrincipalRegex("OU=app\\:(.*?)(?:,|$)")
+				.and()
 			.authorizeRequests()
 				.anyRequest().authenticated();
 	}

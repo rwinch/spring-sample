@@ -27,6 +27,6 @@ public class MessageController {
 
 	@GetMapping("/")
 	public String message() {
-		return "Hello CORS!";
+		return "Hello X509!";
 	}
 }
