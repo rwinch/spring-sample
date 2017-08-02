@@ -31,5 +31,6 @@ Windows users use
 ----
 
 * Open http://localhost:8080/ in your browser
-* You can log in with user/password
+* You can log in with user/oldpassword
+* You can change the password by visiting http://localhost:8080/password/forgot
 * To stop the container use Ctrl-C from the commandline

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Forgot Password</title>
+    <style>
+        .has-error { color: red; }
+    </style>
+</head>
+<body>
+<form th:action="@{/password/forgot}" method="post" th:object="${passwordForm}">
+    <div class="form-group" th:classAppend="${#fields.hasErrors('secret')}? 'has-error'">
+        <label for="secret">
+            What is the secret to reset your password?
+        </label>
+        <input class="form-control" type="text" th:field="*{secret}"/>
+    </div>
+    <div class="form-group" th:classAppend="${#fields.hasErrors('username')}? 'has-error'">
+        <label for="username">
+            Username
+        </label>
+        <input class="form-control" type="text" th:field="*{username}"/>
+    </div>
+    <div class="form-group" th:classAppend="${#fields.hasErrors('password')}? 'has-error'">
+        <label for="password">
+            New Password
+        </label>
+        <input class="form-control" type="text" th:field="*{password}"/>
+    </div>
+    <button id="sign" type="submit" class="btn btn-success">Change Password</button>
+</form>
+</body>
+</html>

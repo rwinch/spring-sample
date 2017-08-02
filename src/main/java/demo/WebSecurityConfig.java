@@ -15,9 +15,19 @@
  */
 package demo;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Rob Winch
@@ -29,9 +39,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.httpBasic().and()
-			.cors().and()
 			.authorizeRequests()
-				.anyRequest().authenticated();
+				.mvcMatchers("/password/forgot").permitAll()
+				.anyRequest().authenticated()
+				.and()
+			.formLogin().and()
+			.httpBasic();
+	}
+
+	@Bean
+	public static UserDetailsManager userDetailsManager(PasswordEncoder pe) {
+		String password = pe.encode("oldpassword");
+		UserDetails user = User.withUsername("user")
+				.password(password)
+				.roles("USER")
+				.build();
+		List<UserDetails> users = Arrays.asList(user);
+		return new InMemoryUserDetailsManager(users);
+	}
+
+	@Bean
+	public static PasswordEncoder bcryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 }
