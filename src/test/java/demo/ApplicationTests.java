@@ -1,5 +1,6 @@
 package demo;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
@@ -43,20 +44,29 @@ public class ApplicationTests {
 	}
 
 	@Test
-	public void preflightWorks() throws Exception {
-		MockHttpServletRequestBuilder preflightRequest = options("/")
-				.header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
-				.header(HttpHeaders.ORIGIN, "localhost");
-		mockMvc.perform(preflightRequest)
-				.andExpect(status().isOk())
-				.andExpect(content().string(""));
+	public void adminOk() throws Exception {
+		mockMvc.perform(get("/").with(httpBasic("admin","admin")))
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(content().string("Hello Admin!"));
 	}
 
-	@WithMockUser
+	@Test
+	public void userDenied() throws Exception {
+		mockMvc.perform(get("/").with(httpBasic("user","user")))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	public void failedLogin() throws Exception {
+		mockMvc.perform(get("/").with(httpBasic("user","invalid")))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@WithMockUser(roles = "ADMIN")
 	@Test
 	public void authenticatedWorks() throws Exception {
 		mockMvc.perform(get("/"))
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(content().string("Hello CORS!"));
+			.andExpect(content().string("Hello Admin!"));
 	}
 }
