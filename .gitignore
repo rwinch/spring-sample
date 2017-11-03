@@ -9,3 +9,4 @@ bin
 .springBeans
 .gradle
 *.iml
+s101plugin.state
