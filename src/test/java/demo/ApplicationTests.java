@@ -61,4 +61,57 @@ public class ApplicationTests {
 				.expectStatus().isOk()
 				.expectBody(String.class).isEqualTo("Hello Boot!");
 	}
+
+	// --- principal tests ---
+
+
+	@Test
+	public void httpBasicPrincipalWorks() throws Exception {
+		this.http.get()
+				.uri("/principal")
+				.attributes(basicAuthenticationCredentials("user", "password"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class).isEqualTo("Hello user");
+	}
+
+	@Test
+	public void httpBasicPrincipalMonoWorks() throws Exception {
+		this.http.get()
+				.uri("/principal/mono")
+				.attributes(basicAuthenticationCredentials("user", "password"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class).isEqualTo("Hello user");
+	}
+
+	@Test
+	public void httpBasicUserDetailsWorks() throws Exception {
+		this.http.get()
+				.uri("/userdetails")
+				.attributes(basicAuthenticationCredentials("user", "password"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class).isEqualTo("Hello user");
+	}
+
+	@Test
+	public void httpBasicUserDetailsMonoWorks() throws Exception {
+		this.http.get()
+				.uri("/userdetails/mono")
+				.attributes(basicAuthenticationCredentials("user", "password"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class).isEqualTo("Hello user");
+	}
+
+	@Test
+	public void httpBasicExchangePrincipalWorks() throws Exception {
+		this.http.get()
+				.uri("/exchange/principal")
+				.attributes(basicAuthenticationCredentials("user", "password"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class).isEqualTo("Hello user");
+	}
 }
