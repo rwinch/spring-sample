@@ -35,11 +35,18 @@ public class ApplicationTests {
 				.andExpect(content().string("Hello Boot!"));
 	}
 
-	@WithMockUser
 	@Test
-	public void authenticatedWorks() throws Exception {
+	@WithMockUser
+	public void mockUserPermitted() throws Exception {
 		this.mockMvc.perform(get("/"))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(content().string("Hello Boot!"));
+				.andExpect(status().isOk())
+				.andExpect(content().string("Hello Boot!"));
+	}
+
+	@Test
+	@WithMockUser("notallowed")
+	public void mockNotallowedForbidden() throws Exception {
+		this.mockMvc.perform(get("/"))
+				.andExpect(status().isForbidden());
 	}
 }
