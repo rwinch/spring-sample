@@ -26,6 +26,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import java.util.Arrays;
+
 /**
  * @author Rob Winch
  *
@@ -35,11 +37,10 @@ public class WebSecurityConfig {
 
 	@Bean
 	public static InMemoryUserDetailsManager userDetailsManager() {
-		UserDetails user = User.withDefaultPasswordEncoder()
-			.username("user")
+		UserDetails user = User.withUsername("user")
 				.password("password")
 				.roles("USER")
 				.build();
-		return new InMemoryUserDetailsManager(user);
+		return new InMemoryUserDetailsManager(Arrays.asList(user));
 	}
 }

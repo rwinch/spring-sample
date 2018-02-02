@@ -30,6 +30,119 @@ Windows users use
 .\mvnw.bat spring-boot:run
 ----
 
-* Open http://localhost:8080/ in your browser
-* You can log in with user/password
-* To stop the container use Ctrl-C from the commandline
+== Access Denied
+
+[source,bash]
+----
+$ http -v --auth user:password --json get :8080/messages/1
+----
+
+[source,http]
+----
+GET /messages/1 HTTP/1.1
+Accept: application/json
+Accept-Encoding: gzip, deflate
+Authorization: Basic dXNlcjpwYXNzd29yZA==
+Connection: keep-alive
+Content-Type: application/json
+Host: localhost:8080
+User-Agent: HTTPie/0.9.2
+
+
+
+HTTP/1.1 403
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Content-Type: application/json;charset=UTF-8
+Date: Fri, 02 Feb 2018 04:27:29 GMT
+Expires: 0
+Pragma: no-cache
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+Transfer-Encoding: chunked
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+{
+  "error": "Forbidden",
+  "exception": "org.springframework.security.access.AccessDeniedException",
+  "message": "Access is denied",
+  "path": "/messages/1",
+  "status": 403,
+  "timestamp": 1517545649806
+}
+----
+
+== Grant Access
+
+[source,bash]
+----
+http -v --auth user:password --json post ':8080/acl?user=user'
+----
+
+[source,http]
+----
+POST /acl?user=user HTTP/1.1
+Accept: application/json
+Accept-Encoding: gzip, deflate
+Authorization: Basic dXNlcjpwYXNzd29yZA==
+Connection: keep-alive
+Content-Length: 0
+Content-Type: application/json
+Host: localhost:8080
+User-Agent: HTTPie/0.9.2
+
+
+
+HTTP/1.1 200
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Content-Type: application/json;charset=UTF-8
+Date: Fri, 02 Feb 2018 04:30:49 GMT
+Expires: 0
+Pragma: no-cache
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+Transfer-Encoding: chunked
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+100
+----
+
+== Access Granted
+
+[source,bash]
+----
+$ http -v --auth user:password --json get :8080/messages/1
+----
+
+[source,http]
+----
+GET /messages/1 HTTP/1.1
+Accept: application/json
+Accept-Encoding: gzip, deflate
+Authorization: Basic dXNlcjpwYXNzd29yZA==
+Connection: keep-alive
+Content-Type: application/json
+Host: localhost:8080
+User-Agent: HTTPie/0.9.2
+
+
+
+HTTP/1.1 200
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Content-Type: application/json;charset=UTF-8
+Date: Fri, 02 Feb 2018 04:31:13 GMT
+Expires: 0
+Pragma: no-cache
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+Transfer-Encoding: chunked
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+{
+    "id": 1,
+    "text": "Hello Spring"
+}
+
+----

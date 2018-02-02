@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package demo;
+package demo.message;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin
 public class MessageController {
+	private final MessageRepository messages;
 
-	@GetMapping("/")
-	public String message() {
-		return "Hello Boot!";
+	public MessageController(MessageRepository messages) {
+		this.messages = messages;
+	}
+
+	@GetMapping("/messages/{id}")
+	public Message message(@PathVariable Long id) {
+		return this.messages.findOne(id);
+	}
+
+	@GetMapping("/messages")
+	public Iterable<Message> message() {
+		return this.messages.findAll();
 	}
 }
