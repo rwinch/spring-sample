@@ -30,33 +30,23 @@ public class ApplicationTests {
 
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders
-				.webAppContextSetup(context)
+		this.mockMvc = MockMvcBuilders
+				.webAppContextSetup(this.context)
 				.apply(springSecurity())
 				.build();
 	}
 
 	@Test
 	public void requiresLogin() throws Exception {
-		mockMvc.perform(get("/"))
+		this.mockMvc.perform(get("/"))
 				.andExpect(status().isUnauthorized());
 	}
 
 	@Test
-	public void preflightWorks() throws Exception {
-		MockHttpServletRequestBuilder preflightRequest = options("/")
-				.header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
-				.header(HttpHeaders.ORIGIN, "localhost");
-		mockMvc.perform(preflightRequest)
-				.andExpect(status().isOk())
-				.andExpect(content().string(""));
-	}
-
 	@WithMockUser
-	@Test
 	public void authenticatedWorks() throws Exception {
-		mockMvc.perform(get("/"))
+		this.mockMvc.perform(get("/"))
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(content().string("Hello CORS!"));
+			.andExpect(content().string("Hello Boot!"));
 	}
 }
