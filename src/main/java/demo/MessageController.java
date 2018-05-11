@@ -15,14 +15,24 @@
  */
 package demo;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MessageController {
 
-	@GetMapping("/")
-	public String message() {
-		return "Hello Boot!";
+	@GetMapping("/entity/explicit")
+	public ResponseEntity<String> entityExplicit() {
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setCacheControl("private, max-age=1800, must-revalidate");
+		return new ResponseEntity<>("test", headers, HttpStatus.OK);
+	}
+
+	@GetMapping("/entity/security")
+	public ResponseEntity<String> entitySecurityHeaders() {
+		return new ResponseEntity<>("test", HttpStatus.OK);
 	}
 }
