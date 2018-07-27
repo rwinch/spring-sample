@@ -24,22 +24,13 @@ public class ApplicationTests {
 
 	@Test
 	public void requiresLogin() throws Exception {
-		this.mockMvc.perform(get("/").accept(MediaType.APPLICATION_JSON))
+		this.mockMvc.perform(get("/foo").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isUnauthorized());
 	}
 
 	@Test
-	public void httpBasicWorks() throws Exception {
-		this.mockMvc.perform(get("/").with(httpBasic("user","password")))
-				.andExpect(status().isOk())
-				.andExpect(content().string("Hello Boot!"));
-	}
-
-	@WithMockUser
-	@Test
-	public void authenticatedWorks() throws Exception {
-		this.mockMvc.perform(get("/"))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(content().string("Hello Boot!"));
+	public void requiresLoginTrailingSlash() throws Exception {
+		this.mockMvc.perform(get("/foo/").accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnauthorized());
 	}
 }

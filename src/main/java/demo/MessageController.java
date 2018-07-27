@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class MessageController {
 
-	@GetMapping("/")
+	@GetMapping("/foo")
 	public String message() {
 		return "Hello Boot!";
 	}
