@@ -35,6 +35,12 @@ public class ApplicationTests {
 				.andExpect(content().string("Hello Boot!"));
 	}
 
+	@Test
+	public void badCredentials() throws Exception {
+		this.mockMvc.perform(get("/").with(httpBasic("invalid", "creds")))
+				.andExpect(status().isUnauthorized());
+	}
+
 	@WithMockUser
 	@Test
 	public void authenticatedWorks() throws Exception {
