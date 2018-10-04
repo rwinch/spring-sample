@@ -15,14 +15,30 @@
  */
 package demo;
 
+import io.reactivex.Single;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 public class MessageController {
+	final RxMessageService rxMessages;
 
-	@GetMapping("/")
-	public String message() {
-		return "Hello Boot!";
+	final ReactorMessageService reactorMessages;
+
+	public MessageController(RxMessageService rxMessages,
+			ReactorMessageService reactorMessages) {
+		this.rxMessages = rxMessages;
+		this.reactorMessages = reactorMessages;
+	}
+
+	@GetMapping("/rx")
+	public Single<String> rx() {
+		return this.rxMessages.message();
+	}
+
+	@GetMapping("/mono")
+	public Mono<String> mono() {
+		return this.reactorMessages.message();
 	}
 }
