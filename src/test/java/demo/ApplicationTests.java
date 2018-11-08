@@ -9,15 +9,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
-import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.Credentials.basicAuthenticationCredentials;
-import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
+@RunWith(SpringRunner.class)
 public class ApplicationTests {
 	@Autowired
 	ApplicationContext context;
@@ -29,7 +27,6 @@ public class ApplicationTests {
 		this.http = WebTestClient.bindToApplicationContext(this.context)
 				.apply(springSecurity())
 				.configureClient()
-				.filter(basicAuthentication())
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}
@@ -46,7 +43,7 @@ public class ApplicationTests {
 	public void httpBasicWorks() throws Exception {
 		this.http.get()
 			.uri("/")
-			.attributes(basicAuthenticationCredentials("user", "password"))
+			.headers(h -> h.setBasicAuth("user", "password"))
 			.exchange()
 			.expectStatus().isOk()
 			.expectBody(String.class).isEqualTo("Hello Boot!");
