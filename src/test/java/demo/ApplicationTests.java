@@ -12,6 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
 @SpringBootTest
@@ -27,35 +28,14 @@ public class ApplicationTests {
 		this.http = WebTestClient.bindToApplicationContext(this.context)
 				.apply(springSecurity())
 				.configureClient()
-				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}
 
 	@Test
-	public void requiresLogin() throws Exception {
-		this.http.get()
-				.uri("/")
+	public void loginHasCsrfToken() {
+		this.http.get().uri("/login")
 				.exchange()
-				.expectStatus().isUnauthorized();
-	}
-
-	@Test
-	public void httpBasicWorks() throws Exception {
-		this.http.get()
-			.uri("/")
-			.headers(h -> h.setBasicAuth("user", "password"))
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody(String.class).isEqualTo("Hello Boot!");
-	}
-
-	@WithMockUser
-	@Test
-	public void authenticatedWorks() throws Exception {
-		this.http.get()
-				.uri("/")
-				.exchange()
-				.expectStatus().isOk()
-				.expectBody(String.class).isEqualTo("Hello Boot!");
+				.expectBody(String.class)
+				.value(c -> assertThat(c).contains("<input type=\"hidden\" name=\"_csrf\" value=\""));
 	}
 }
