@@ -15,12 +15,17 @@
  */
 package demo;
 
+import com.nimbusds.jose.jwk.RSAKey;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
@@ -33,11 +38,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+			.csrf().disable()
 			.authorizeRequests()
 				.anyRequest().authenticated()
 				.and()
-			.formLogin().and()
-			.httpBasic();
+			.httpBasic().and()
+			.oauth2ResourceServer()
+				.jwt();
 	}
 
 	@Bean
@@ -48,5 +55,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.roles("USER")
 				.build();
 		return new InMemoryUserDetailsManager(user);
+	}
+
+	@Bean
+	JwtDecoder decoder(RSAKey rsaKey) throws Exception {
+		return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey())
+			.build();
 	}
 }

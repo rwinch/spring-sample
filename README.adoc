@@ -30,6 +30,12 @@ Windows users use
 .\mvnw.bat spring-boot:run
 ----
 
-* Open http://localhost:8080/ in your browser
-* You can log in with user/password
-* To stop the container use Ctrl-C from the commandline
+Open another terminal:
+
+[source,bash]
+----
+# Get a token with the username user and password of password
+export TOKEN=$(curl -X POST http://localhost:8080/token -u user:password)
+# Use the token to get a message
+curl http://localhost:8080 -H "Authorization: Bearer $TOKEN"
+----
