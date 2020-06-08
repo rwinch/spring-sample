@@ -11,8 +11,8 @@ To run the sample application you must have Maven 3 installed. After doing so yo
 * Navigate to the folder on the commandline
 * Execute
 
-    mvn package cargo:run 
+    mvn package spring-boot:run 
 
-* Open http://localhost:8080/sample/ in your browser
-* You can log in with user/password or admin/password
+* Open http://localhost:8080/user/hello or http://localhost:8080/admin/hello in your browser
+* You can log in with user/password or admin/password (depending on the chosen URL)
 * To stop the container use Ctrl-C from the commandline
