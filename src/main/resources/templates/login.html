@@ -1,49 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Please Log In</title>
+    <title>User Log In</title>
 </head>
 <body>
 <div class="container">
     <h1>User Log In</h1>
     <form method="post"
-          th:action="@{/login}">
-        <div th:if="${param.error}"
-             class="alert alert-danger"
-             role="alert">
+          th:action="@{/user_login}">
+        <div th:if="${param.error}">
             Invalid username and password.
         </div>
-        <div th:if="${param.logout}"
-             class="alert alert-success"
-             role="alert">
+        <div th:if="${param.logout}">
             You have been logged out.
         </div>
-        <div class="form-group">
-            <label for="username"
-                   class="sr-only">Username</label>
+        <div>
+            <label for="username">Username</label>
             <input type="text"
                    id="username"
                    name="username"
-                   class="form-control"
                    placeholder="Username"
                    required autofocus>
         </div>
         <div class="form-group">
-            <label for="password"
-                   class="sr-only">Password</label>
+            <label for="password">Password</label>
             <input type="password"
                    id="password"
                    name="password"
-                   class="form-control"
                    placeholder="Password"
                    required>
         </div>
-        <button class="btn btn-primary"
-                type="submit">Sign in</button>
+        <button type="submit">Sign in</button>
     </form>
 </div>
 </body>
