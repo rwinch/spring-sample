@@ -17,36 +17,42 @@ package demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * @author Rob Winch
  *
  */
+@Order(0)
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+			.mvcMatcher("/admin/**")
 			.authorizeRequests()
-				.anyRequest().authenticated()
+				.anyRequest().hasRole("ADMIN")
 				.and()
-			.formLogin().and()
-			.httpBasic();
+			.formLogin()
+				.loginPage("/admin/login")
+				.permitAll();
 	}
 
-	@Bean
-	public static InMemoryUserDetailsManager userDetailsManager() {
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		UserDetails user = User.withDefaultPasswordEncoder()
 			.username("user")
-				.password("password")
-				.roles("USER")
+				.password("admin")
+				.roles("USER","ADMIN")
 				.build();
-		return new InMemoryUserDetailsManager(user);
+		auth.userDetailsService(new InMemoryUserDetailsManager(user));
 	}
 }

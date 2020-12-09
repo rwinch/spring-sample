@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Admin Index</title>
+</head>
+<body>
+<div class="container">
+    <h1>Admin</h1>
+    <a th:href="@{/}">User Page</a>
+    <form method="post"
+          th:action="@{/logout}">
+
+        <button type="submit">Log Out</button>
+    </form>
+</div>
+</body>
+</html>
