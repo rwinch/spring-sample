@@ -9,12 +9,17 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 	@Bean
-	public DefaultSecurityFilterChain configure(HttpSecurity http) throws Exception {
+	public DefaultSecurityFilterChain configure(Optional<AuthenticationFilter> authenticationFilter, HttpSecurity http) throws Exception {
+		authenticationFilter.map(f -> http.addFilterAfter(f, BasicAuthenticationFilter.class));
 		http
 			.authorizeRequests(requests -> requests
 				.anyRequest().authenticated()
