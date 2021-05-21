@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/message")
-public class MessageController {
+@RequestMapping("/projects/survey")
+public class ProjectSurveyController {
     @GetMapping("form")
     String message(@ModelAttribute ProjectSurvey projectSurvey) {
         return "message/form";

@@ -25,35 +25,18 @@ public class SpringBootSecurityApplicationTests {
 	@Autowired
 	MockMvc mockMvc;
 
-
-	@Test
-	void immutableForm() throws Exception{
-		this.mockMvc.perform(get("/name/form"))
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	void postImmutableForm() throws Exception{
-		MockHttpServletRequestBuilder request = post("/name")
-				.param("name.firstName", "Rob")
-				.param("name.lastName", "Winch");
-		this.mockMvc.perform(request)
-				.andExpect(redirectedUrl("/name/form?success"))
-				.andExpect(status().is3xxRedirection());
-	}
-
 	@Test
 	void nestedImmutableForm() throws Exception{
-		this.mockMvc.perform(get("/message/form"))
+		this.mockMvc.perform(get("/projects/survey/form"))
 				.andExpect(status().isOk());
 	}
 
 	@Test
 	void postNestedImmutableForm() throws Exception{
-		MockHttpServletRequestBuilder request = post("/message")
-				.param("message.name.firstName", "Rob")
-				.param("message.name.lastName", "Winch")
-				.param("message.text", "Hello");
+		MockHttpServletRequestBuilder request = post("/projects/survey")
+				.param("projectSurvey.name.firstName", "Rob")
+				.param("projectSurvey.name.lastName", "Winch")
+				.param("projectSurvey.text", "Hello");
 		this.mockMvc.perform(request)
 				.andExpect(redirectedUrl("/message/form?success"))
 				.andExpect(status().is3xxRedirection());
