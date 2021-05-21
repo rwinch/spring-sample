@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -18,41 +17,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@SpringBootTest
+@WebAppConfiguration
+@AutoConfigureMockMvc
+@ExtendWith(SpringExtension.class)
 public class SpringBootSecurityApplicationTests {
-
 	@Autowired
-	private MockMvc mockMvc;
+	MockMvc mockMvc;
+
 
 	@Test
-	void formIsOk() throws  Exception{
-		this.mockMvc.perform(get("/projects/survey/form"))
+	void immutableForm() throws Exception{
+		this.mockMvc.perform(get("/name/form"))
 				.andExpect(status().isOk());
 	}
 
+	@Test
+	void postImmutableForm() throws Exception{
+		MockHttpServletRequestBuilder request = post("/name")
+				.param("name.firstName", "Rob")
+				.param("name.lastName", "Winch");
+		this.mockMvc.perform(request)
+				.andExpect(redirectedUrl("/name/form?success"))
+				.andExpect(status().is3xxRedirection());
+	}
 
 	@Test
-	void postIsSuccess() throws  Exception{
-		MockHttpServletRequestBuilder request = post("/projects/survey")
-				.param("id", "survey-id")
+	void nestedImmutableForm() throws Exception{
+		this.mockMvc.perform(get("/message/form"))
+				.andExpect(status().isOk());
+	}
 
-
-				.param("project.organization","spring-projects")
-//				.param("project.repository", "spring-security")
-//				.param("project.name", "Spring Security")
-
-//				.param("projectProfile.id","profile-id")
-//				.param("projectProfile.project.organization","spring-projects")
-//				.param("projectProfile.project.repository", "spring-security")
-//				.param("projectProfile.project.name", "Spring Security")
-//				.param("projectProfile.project.teamMembers", "rwinch,jgrandja")
-//				.param("projectProfile.projectLeadName", "Rob Winch")
-//				.param("projectProfile.lifeCycleStage", "ACTIVE_DEVELOPMENT")
-//				.param("projectProfile.commercialAlignment", "BUSINESS_GROWING")
-//				.param("projectProfile.commerciallySupported", "true")
-				;
+	@Test
+	void postNestedImmutableForm() throws Exception{
+		MockHttpServletRequestBuilder request = post("/message")
+				.param("message.name.firstName", "Rob")
+				.param("message.name.lastName", "Winch")
+				.param("message.text", "Hello");
 		this.mockMvc.perform(request)
-				.andExpect(redirectedUrl("/projects/survey/form?success"))
+				.andExpect(redirectedUrl("/message/form?success"))
 				.andExpect(status().is3xxRedirection());
 	}
 }
