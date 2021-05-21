@@ -13,12 +13,12 @@ import javax.validation.Valid;
 @RequestMapping("/message")
 public class MessageController {
     @GetMapping("form")
-    String message(@ModelAttribute Message message) {
+    String message(@ModelAttribute ProjectSurvey projectSurvey) {
         return "message/form";
     }
 
     @PostMapping
-    String save(@Valid Message message, Errors errors) {
+    String save(@Valid ProjectSurvey projectSurvey, Errors errors) {
         return "redirect:/message/form?success";
     }
 }

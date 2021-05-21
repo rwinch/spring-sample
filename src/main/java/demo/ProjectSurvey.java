@@ -1,12 +1,12 @@
 package demo;
 
-public class Message {
+public class ProjectSurvey {
 	private final Person person;
 
 	private final String text;
 
 
-	public Message(Person person, String text) {
+	public ProjectSurvey(Person person, String text) {
 		this.person = person;
 		this.text = text;
 	}
