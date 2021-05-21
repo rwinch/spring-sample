@@ -1,21 +1,23 @@
 package demo;
 
 public class ProjectSurvey {
-	private final String text;
 
-	private final Person person;
+	private final String id;
+
+	private final Project project;
 
 
-	public ProjectSurvey(String text, Person person) {
-		this.person = person;
-		this.text = text;
+	public ProjectSurvey(String id, Project project) {
+		this.id = id;
+		this.project = project;
 	}
 
-	public Person getPerson() {
-		return person;
+
+	public String getId() {
+		return this.id;
 	}
 
-	public String getText() {
-		return text;
+	public Project getProject() {
+		return this.project;
 	}
 }

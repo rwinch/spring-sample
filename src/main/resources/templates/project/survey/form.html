@@ -1,0 +1,113 @@
+<!--
+  ~ Copyright 2021 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      https://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <title>Create Project</title>
+    <link href="https://getbootstrap.com/docs/3.4/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="container">
+        <h1>Create Project</h1>
+        <div id="success" th:if="${success}" class="alert alert-success">
+            Success!
+        </div>
+        <form th:action="@{/projects/survey}" method="post" th:object="${projectSurvey}">
+            <!--
+            <input type="hidden" th:field="*{projectProfile.id}" />
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.project.name')}? 'has-error'">
+                <label for="name">
+                    Project Name
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.project.name}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.project.name')}" id="err-name">
+                    <p th:errors="*{name}">Input is incorrect</p>
+                </div>
+            </div>
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.lifeCycleStage')}? 'has-error'">
+                <label for="name">
+                    Project Lifecycle Stage
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.lifeCycleStage}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.lifeCycleStage')}" id="err-lifeCycleStage">
+                    <p th:errors="*{projectProfile.lifeCycleStage}">Input is incorrect</p>
+                </div>
+            </div>
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.commercialAlignment')}? 'has-error'">
+                <label for="name">
+                    Project commercialAlignment
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.commercialAlignment}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.commercialAlignment')}" id="err-commercialAlignment">
+                    <p th:errors="*{projectProfile.commercialAlignment}">Input is incorrect</p>
+                </div>
+            </div>
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.commerciallySupported')}? 'has-error'">
+                <label for="name">
+                    Project commerciallySupported
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.commerciallySupported}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.commerciallySupported')}" id="err-commerciallySupported">
+                    <p th:errors="*{projectProfile.commerciallySupported}">Input is incorrect</p>
+                </div>
+            </div>
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.projectLeadName')}? 'has-error'">
+                <label for="name">
+                    Project Lead Name
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.projectLeadName}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.projectLeadName')}" id="err-projectLeadName">
+                    <p th:errors="*{projectProfile.projectLeadName}">Input is incorrect</p>
+                </div>
+            </div>
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.project.organization')}? 'has-error'">
+                <label for="organization">
+                    GitHub Organization
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.project.organization}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.project.organization')}" id="err-organization">
+                    <p th:errors="*{organization}">Input is incorrect</p>
+                </div>
+            </div>
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.project.repository')}? 'has-error'">
+                <label for="repository">
+                    GitHub Repository Name
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.project.repository}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.project.repository')}" id="err-repository">
+                    <p th:errors="*{projectProfile.project.repository}">Input is incorrect</p>
+                </div>
+            </div>
+            <div class="form-group" th:classAppend="${#fields.hasErrors('projectProfile.project.teamMembers')}? 'has-error'">
+                <label for="teamMembers">
+                    Team Members (, separated list)
+                </label>
+                <input class="form-control"  type="text" th:field="*{projectProfile.project.teamMembers}"/>
+                <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('projectProfile.project.teamMembers')}" id="err-teamMembers">
+                    <p th:errors="*{teamMembers}">Input is incorrect</p>
+                </div>
+            </div> -->
+            <div class="button-group">
+                <button id="create" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
