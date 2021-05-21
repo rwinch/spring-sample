@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -17,45 +18,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@WebAppConfiguration
-@AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
+@WebMvcTest
 public class SpringBootSecurityApplicationTests {
+
 	@Autowired
-	MockMvc mockMvc;
-
+	private MockMvc mockMvc;
 
 	@Test
-	void immutableForm() throws Exception{
-		this.mockMvc.perform(get("/name/form"))
+	void formIsOk() throws  Exception{
+		this.mockMvc.perform(get("/projects/survey/form"))
 				.andExpect(status().isOk());
 	}
 
-	@Test
-	void postImmutableForm() throws Exception{
-		MockHttpServletRequestBuilder request = post("/name")
-				.param("name.firstName", "Rob")
-				.param("name.lastName", "Winch");
-		this.mockMvc.perform(request)
-				.andExpect(redirectedUrl("/name/form?success"))
-				.andExpect(status().is3xxRedirection());
-	}
 
 	@Test
-	void nestedImmutableForm() throws Exception{
-		this.mockMvc.perform(get("/message/form"))
-				.andExpect(status().isOk());
-	}
+	void postIsSuccess() throws  Exception{
+		MockHttpServletRequestBuilder request = post("/projects/survey")
+				.param("id", "survey-id")
 
-	@Test
-	void postNestedImmutableForm() throws Exception{
-		MockHttpServletRequestBuilder request = post("/message")
-				.param("message.name.firstName", "Rob")
-				.param("message.name.lastName", "Winch")
-				.param("message.text", "Hello");
+
+				.param("project.organization","spring-projects")
+//				.param("project.repository", "spring-security")
+//				.param("project.name", "Spring Security")
+
+//				.param("projectProfile.id","profile-id")
+//				.param("projectProfile.project.organization","spring-projects")
+//				.param("projectProfile.project.repository", "spring-security")
+//				.param("projectProfile.project.name", "Spring Security")
+//				.param("projectProfile.project.teamMembers", "rwinch,jgrandja")
+//				.param("projectProfile.projectLeadName", "Rob Winch")
+//				.param("projectProfile.lifeCycleStage", "ACTIVE_DEVELOPMENT")
+//				.param("projectProfile.commercialAlignment", "BUSINESS_GROWING")
+//				.param("projectProfile.commerciallySupported", "true")
+				;
 		this.mockMvc.perform(request)
-				.andExpect(redirectedUrl("/message/form?success"))
+				.andExpect(redirectedUrl("/projects/survey/form?success"))
 				.andExpect(status().is3xxRedirection());
 	}
 }
