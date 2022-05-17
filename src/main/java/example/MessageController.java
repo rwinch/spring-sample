@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MessageController {
 
-	@GetMapping("/")
+	@GetMapping("/**")
 	public String message() {
 		return "Hello Boot!";
 	}
