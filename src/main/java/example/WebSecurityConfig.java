@@ -17,12 +17,20 @@ package example;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.GenericFilterBean;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.io.IOException;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -31,27 +39,45 @@ import static org.springframework.security.config.Customizer.withDefaults;
  *
  */
 @Configuration
+@EnableWebSecurity
 public class WebSecurityConfig {
 
 	// @formatter:off
-	@Bean
-	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-		http
-			.authorizeExchange(exchange -> exchange
-				.anyExchange().authenticated()
-			)
-			.formLogin(withDefaults());
-		return http.build();
-	}
+@Bean
+public DefaultSecurityFilterChain springSecurity(HttpSecurity http) throws Exception {
+	http
+		.securityContext(s -> s
+			.requireExplicitSave(true)
+		)
+		.authorizeHttpRequests(exchange -> exchange
+			.mvcMatchers("/secure/**").authenticated()
+			.anyRequest().permitAll()
+		)
+		.formLogin(withDefaults());
+	return http.build();
+}
 	// @formatter:on
 
 	@Bean
-	public static MapReactiveUserDetailsService userDetailsService() {
+	public static InMemoryUserDetailsManager userDetailsService() {
 		UserDetails user = User.withDefaultPasswordEncoder()
 			.username("user")
 			.password("password")
 			.roles("USER")
 			.build();
-		return new MapReactiveUserDetailsService(user);
+		return new InMemoryUserDetailsManager(user);
+	}
+
+	public static class AuthorizationFilter extends GenericFilterBean {
+
+		@Override
+		public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
+		}
+
+		@Override
+		protected void initFilterBean() throws ServletException {
+			throw new RuntimeException("");
+		}
 	}
 }

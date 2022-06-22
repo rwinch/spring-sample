@@ -14,19 +14,20 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.1.RELEASE</version>
+		<version>2.7.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<spring-security.version>5.8.0-local-SNAPSHOT</spring-security.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -74,9 +75,9 @@
 	</pluginRepositories>
 	<repositories>
 		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>http://repo.spring.io/libs-snapshot</url>
+			<id>spring-security-local</id>
+			<name>Spring Security Local</name>
+			<url>file:////home/rwinch/code/spring-projects/spring-security/5.8.x/build/publications/repos</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
