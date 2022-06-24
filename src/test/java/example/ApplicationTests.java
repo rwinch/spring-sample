@@ -2,26 +2,26 @@ package example;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureWebTestClient
+@AutoConfigureMockMvc
 public class ApplicationTests {
 	@Autowired
-	WebTestClient rest;
+	MockMvc mockMvc;
 
 	@WithUserDetails
 	@Test
 	public void authenticatedWorks() throws Exception {
-		this.rest.get().uri("/").exchange()
-			.expectStatus()
-				.is2xxSuccessful()
-			.expectBody(String.class)
-				.value(b -> assertThat(b).contains("Hello Boot!"));
+		this.mockMvc.perform(get("/"))
+			.andExpect(status().isOk())
+			.andExpect(content().string("Hello Boot!"));
 	}
 }
