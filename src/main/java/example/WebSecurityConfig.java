@@ -24,6 +24,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.csrf.LazyCsrfTokenRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -45,10 +49,22 @@ public class WebSecurityConfig {
 	// @formatter:off
 @Bean
 public DefaultSecurityFilterChain springSecurity(HttpSecurity http) throws Exception {
+	LazyCsrfTokenRepository csrfTokenRepository = new LazyCsrfTokenRepository(new HttpSessionCsrfTokenRepository());
+	csrfTokenRepository.setDeferLoadToken(true);
+	HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+	requestCache.setMatchingRequestParameterName("success");
 	http
 		.securityContext(s -> s
 			.requireExplicitSave(true)
 		)
+		.sessionManagement().disable()
+		.csrf(csrf -> csrf
+			.csrfTokenRepository(csrfTokenRepository)
+			.csrfRequestAttributeName("_csrf")
+		)
+//		.csrf().disable()
+//		.anonymous().disable()
+		.requestCache(cache -> cache.requestCache(requestCache))
 		.authorizeHttpRequests(exchange -> exchange
 			.mvcMatchers("/secure/**").authenticated()
 			.anyRequest().permitAll()
