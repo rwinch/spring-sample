@@ -35,7 +35,7 @@ public class MessageController {
 	public String message(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient twitter) {
 		String user = webClient.get()
 				.uri("https://api.twitter.com/2/users/me")
-				.headers(h -> h.setBearerAuth(twitter.getAccessToken().getTokenValue()))
+				.attributes(oauth2AuthorizedClient(twitter))
 				.retrieve()
 				.bodyToMono(String.class)
 				.block();
