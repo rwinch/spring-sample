@@ -1,0 +1,19 @@
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          twitter:
+            client-id: <replace-with-client-id>
+            client-secret: <replace-with-client-secret>
+            scope: 'users.read,tweet.read,follows.read'
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+        provider:
+          twitter:
+            authorization-uri: https://twitter.com/i/oauth2/authorize
+            token-uri: https://api.twitter.com/2/oauth2/token
+            user-info-uri: https://api.twitter.com/2/users/me
+            # This is a workaround because the username attribute is nested in a data.username and we don't support that yet
+            user-name-attribute: data

@@ -15,14 +15,30 @@
  */
 package example;
 
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
 @RestController
 public class MessageController {
+	final WebClient webClient;
+
+	public MessageController(WebClient webClient) {
+		this.webClient = webClient;
+	}
 
 	@GetMapping("/")
-	public String message() {
-		return "Hello Boot!";
+	public String message(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient twitter) {
+		String user = webClient.get()
+				.uri("https://api.twitter.com/2/users/me")
+				.headers(h -> h.setBearerAuth(twitter.getAccessToken().getTokenValue()))
+				.retrieve()
+				.bodyToMono(String.class)
+				.block();
+		return "Hello " + user;
 	}
 }

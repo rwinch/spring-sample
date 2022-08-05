@@ -1,35 +1,28 @@
-= Instructions
+= Twitter OAuth 2.0
 
-Your are likely viewing this because you have submitted a forum question or a JIRA and this is a sample project to illustrate points made in my response.
-You can either run this from the commandline or an IDE that supports Maven (i.e. Spring Tool Suite).
+Go to https://developer.twitter.com/en/portal/petition/essential/basic-info and get a developer account setup
 
-== Running from the commandline
+After confirming your email, you can enter an App Name
 
-To run the sample application you must have Java installed and on your path.
-After doing so you can easily run the application using the Spring Boot plugin.
-Specifically:
+Copy your API Key and Secret and save them
 
-* Navigate to the folder on the commandline
-* To Start the application Linux based users use
+Visit https://developer.twitter.com/en/portal/dashboard and select the settings of your newly created app
 
-+
+Click Set up next to Authentication not set up
 
-[source,bash]
-----
-./mvnw spring-boot:run
-----
+Enable OAuth 2.0
 
-+
+Type of App: Web App
 
-Windows users use
+Callback URI / Redirect URL: http://localhost:8080/login/oauth2/code/twitter
 
-+
+Website URL: https://spring.io
 
-[source,bat]
-----
-.\mvnw.bat spring-boot:run
-----
+Copy the client ID and client Secret
 
-* Open http://localhost:8080/ in your browser
-* You can log in with user/password
-* To stop the container use Ctrl-C from the commandline
+
+
+
+https://github.com/spring-projects/spring-security/issues/6548#issuecomment-1076200345
+
+https://docs.spring.io/spring-security/reference/servlet/oauth2/client/authorization-grants.html#_customizing_the_authorization_request
