@@ -7,9 +7,12 @@ This brings quite a bit of overhead to applications that do not need these featu
 For applications that do not need to look up entries by an index, it is recommended to use https://docs.spring.io/spring-session/docs/2.7.x/api/org/springframework/session/data/redis/RedisSessionRepository.html[`RedisSessionRepository`] instead.
 This sample builds on https://docs.spring.io/spring-session/reference/samples.html#:~:text=HttpSession%20with%20simple%20Redis%20SessionRepository[HttpSession with simple Redis SessionRepository] to help users optimize their Spring Session implementation.
 
+
+NOTE: The application expects that Redis is running on localhost and default port (6379).
+
 == SessionAccessedFilter
 
-The application includes a `SessionAccessFilter` which is a servlet Filter that allows users to understand where the `HttpSession` is being accessed.
+The application includes a https://github.com/rwinch/spring-security-sample/blob/redissessionrepository/src/main/java/example/SessionAccessedFilter.java#L19[`SessionAccessFilter`] which is a servlet Filter that allows users to understand where the `HttpSession` is being accessed.
 If the `HttpSession` is accessed unnecessarily, it can degrade performance.
 The Filter wraps the `HttpServletRequest` just after Spring Session's `SessionRepositoryFilter` wraps the `HttpServletRequest` to print a stacktrace each time the `HttpSession` is accessed.
 
@@ -58,7 +61,7 @@ For this example, it is due to the fact that `SessionController` has `HttpSessio
 
 == SessionConfiguration
 
-The sample provides a `SessionConfiguration` that overrides Spring Boot's configuration of the application to use `RedisSessionRepository`.
+The sample provides a https://github.com/rwinch/spring-security-sample/blob/redissessionrepository/src/main/java/example/SessionConfiguration.java#L13[`SessionConfiguration`] that overrides Spring Boot's configuration of the application to use `RedisSessionRepository`.
 This means Spring Boot's session related properties will not be used.
 
 
