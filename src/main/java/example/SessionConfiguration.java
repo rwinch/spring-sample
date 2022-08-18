@@ -12,8 +12,6 @@ import org.springframework.session.data.redis.RedisSessionRepository;
 @EnableSpringHttpSession
 public class SessionConfiguration {
 
-
-
 	@Bean
 	RedisSessionRepository redisSessionRepository(RedisTemplate<String, Object> springSessionRedisTemplate) {
 		return new RedisSessionRepository(springSessionRedisTemplate);
