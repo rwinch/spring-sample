@@ -20,8 +20,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<spring-security.version>5.8.0-local-SNAPSHOT</spring-security.version>
+		<java.version>14</java.version>
+		<spring-security.version>5.8.0-SNAPSHOT</spring-security.version>
 	</properties>
 
 	<dependencies>
