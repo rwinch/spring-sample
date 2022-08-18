@@ -2,6 +2,7 @@ package example;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(SessionRepositoryFilter.DEFAULT_ORDER + 1)
 public class SessionAccessedFilter extends OncePerRequestFilter {
 
 	@Override
