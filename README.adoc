@@ -1,7 +1,66 @@
-= Instructions
+= Overview
 
-Your are likely viewing this because you have submitted a forum question or a JIRA and this is a sample project to illustrate points made in my response.
-You can either run this from the commandline or an IDE that supports Maven (i.e. Spring Tool Suite).
+By default, Spring Session Redis support uses the https://docs.spring.io/spring-session/docs/2.7.x/api/org/springframework/session/data/redis/RedisIndexedSessionRepository.html[RedisIndexedSessionRepository] which uses a https://docs.spring.io/spring-session/reference/api.html#api-redisindexedsessionrepository-storage[storage format] that includes lots of additional writes to support looking up entries by and index id.
+Additionally, there are events sent to the application to support SessionDestroyedEvent, SessionCreatedEvent.
+
+This brings quite a bit of overhead to applications that do not need these features.
+For applications that do not need to look up entries by an index, it is recommended to use https://docs.spring.io/spring-session/docs/2.7.x/api/org/springframework/session/data/redis/RedisSessionRepository.html[`RedisSessionRepository`] instead.
+This sample builds on https://docs.spring.io/spring-session/reference/samples.html#:~:text=HttpSession%20with%20simple%20Redis%20SessionRepository[HttpSession with simple Redis SessionRepository] to help users optimize their Spring Session implementation.
+
+== SessionAccessedFilter
+
+The application includes a `SessionAccessFilter` which is a servlet Filter that allows users to understand where the `HttpSession` is being accessed.
+If the `HttpSession` is accessed unnecessarily, it can degrade performance.
+The Filter wraps the `HttpServletRequest` just after Spring Session's `SessionRepositoryFilter` wraps the `HttpServletRequest` to print a stacktrace each time the `HttpSession` is accessed.
+
+If an application is using Spring Session, and it is unclear why Spring Session is looking up the session in Redis, then `SessionAccessedFilter` can be copied into the application to see the full callstack of any place the application is using the `HttpSession` to determine if it is desirable or not.
+
+You will see stacks that have messages that start with:
+
+* HttpSession.getSession(false) - if a session id was included in the request, look up the `HttpSession` and return it. Do not create a new `HttpSession`
+* `HttpSession.getSession(true)` - if a session id was included in the request, look up the `HttpSession`. If the session does not exist (the session id was invalid or no session id was provided), create a new `HttpSession`
+* `HttpSession.getSession()` - same as `HttpSession.getSession(true)`
+
+You will see stacktraces that look like:
+
+```
+java.lang.RuntimeException: HttpSession.getSession(false)
+	at example.SessionAccessedFilter$1.getSession(SessionAccessedFilter.java:26)
+	at org.springframework.web.util.WebUtils.getSessionId(WebUtils.java:359)
+	at org.springframework.web.servlet.FrameworkServlet.publishRequestHandledEvent(FrameworkServlet.java:1145)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1023)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:898)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:655)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764)
+	..
+```
+
+This means that Spring's FrameworkServlet is invoking `HttpSession.getSession(false)`.
+The `false` parameter tells the Servlet API (and thus Spring Session) that if there is a session id in the request attempt to load the `HttpSession` (ask Redis for the data for the `HttpSession`) otherwise not to create a new `HttpSession`.
+
+
+```
+java.lang.RuntimeException: HttpSession.getSession()
+	at example.SessionAccessedFilter$1.getSession(SessionAccessedFilter.java:32)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletRequestMethodArgumentResolver.resolveArgument(ServletRequestMethodArgumentResolver.java:139)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletRequestMethodArgumentResolver.resolveArgument(ServletRequestMethodArgumentResolver.java:124)
+	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:121)
+	at org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:179)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:146)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:11
+```
+
+`HttpSession.getSession()` (same as `HttpSession.getSession(true)`) means that `ServletRequestMethodArgumentResolver` is asking for the existing `HttpSession` if a session id is included in the request, otherwise to create a new one.
+For this example, it is due to the fact that `SessionController` has `HttpSession` as a parameter to the Controller, so Spring looks it up.
+
+
+
+== SessionConfiguration
+
+The sample provides a `SessionConfiguration` that overrides Spring Boot's configuration of the application to use `RedisSessionRepository`.
+This means Spring Boot's session related properties will not be used.
+
 
 == Running from the commandline
 
@@ -30,6 +89,5 @@ Windows users use
 .\mvnw.bat spring-boot:run
 ----
 
-* Open http://localhost:8080/ in your browser
-* You can log in with user/password
+* Open http://localhost:8080/ in your browser which allows creating a new sesion
 * To stop the container use Ctrl-C from the commandline
