@@ -23,13 +23,13 @@ public class SessionAccessedFilter extends OncePerRequestFilter {
 		filterChain.doFilter(new HttpServletRequestWrapper(request) {
 			@Override
 			public HttpSession getSession(boolean create) {
-				new RuntimeException("getSession(" + create +")").printStackTrace();
+				new RuntimeException("HttpSession.getSession(" + create +")").printStackTrace();
 				return super.getSession(create);
 			}
 
 			@Override
 			public HttpSession getSession() {
-				new RuntimeException("getSession()").printStackTrace();
+				new RuntimeException("HttpSession.getSession()").printStackTrace();
 				return super.getSession();
 			}
 		}, response);
