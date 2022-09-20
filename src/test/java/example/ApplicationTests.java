@@ -1,27 +1,29 @@
 package example;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 public class ApplicationTests {
-	@Autowired
-	MockMvc mockMvc;
 
-	@WithUserDetails
 	@Test
-	public void authenticatedWorks() throws Exception {
-		this.mockMvc.perform(get("/"))
-			.andExpect(status().isOk())
-			.andExpect(content().string("Hello Boot!"));
+	void go() {
+		// error on startup
+	}
+
+	@Configuration
+	static class Config {
+
+		@Bean
+		EmbeddedDatabase dataSource() {
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).build();
+		}
+
 	}
 }
