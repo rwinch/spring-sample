@@ -39,20 +39,12 @@ public class WebSecurityConfig {
 	public DefaultSecurityFilterChain springSecurityFilter(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(exchange -> exchange
-				.anyRequest().authenticated()
+				.requestMatchers("/").authenticated()
 			)
-			.formLogin(withDefaults());
+			.httpBasic(withDefaults())
+			.oauth2Login(withDefaults());
 		return http.build();
 	}
 	// @formatter:on
 
-	@Bean
-	public static InMemoryUserDetailsManager userDetailsService() {
-		UserDetails user = User.withDefaultPasswordEncoder()
-			.username("user")
-			.password("password")
-			.roles("USER")
-			.build();
-		return new InMemoryUserDetailsManager(user);
-	}
 }
