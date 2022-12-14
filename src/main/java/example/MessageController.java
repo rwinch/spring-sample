@@ -25,4 +25,9 @@ public class MessageController {
 	public String message() {
 		return "Hello Boot!";
 	}
+
+	@GetMapping("/private")
+	public String privateMessage() {
+		return "private message";
+	}
 }

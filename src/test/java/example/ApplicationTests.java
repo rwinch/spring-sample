@@ -1,27 +1,32 @@
 package example;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ApplicationTests {
 	@Autowired
-	MockMvc mockMvc;
+	TestRestTemplate rest;
 
-	@WithUserDetails
 	@Test
-	public void authenticatedWorks() throws Exception {
-		this.mockMvc.perform(get("/"))
-			.andExpect(status().isOk())
-			.andExpect(content().string("Hello Boot!"));
+	public void authenticationRequired() {
+		ResponseEntity<String> result = this.rest.getForEntity("/private", String.class);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
+
+	@Test
+	public void authorizationSuccess() {
+		ResponseEntity<String> result = this.rest.withBasicAuth("user", "password").getForEntity("/private", String.class);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(result.getBody()).isEqualTo("private message");
+	}
+
 }
