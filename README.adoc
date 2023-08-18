@@ -16,7 +16,7 @@ Specifically:
 
 [source,bash]
 ----
-./mvnw spring-boot:run
+./gradlew bootRun
 ----
 
 +
@@ -27,7 +27,7 @@ Windows users use
 
 [source,bat]
 ----
-.\mvnw.bat spring-boot:run
+.\gradlew bootRun
 ----
 
 * Open http://localhost:8080/ in your browser
