@@ -10,8 +10,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration(proxyBeanMethods = false)
 public class RepositoryServiceConfiguration {
 	@Bean
-	RepositoryService repositoryService(RestClient.Builder restClientBldr) {
-		RestClient restClient = restClientBldr
+	RepositoryService repositoryService(RestTemplateBuilder restTemplateBldr) {
+		RestClient restClient = RestClient.builder(restTemplateBldr.build())
 				.baseUrl("http://localhost:8181")
 				.build();
 		RestClientAdapter adapter = RestClientAdapter.create(restClient);

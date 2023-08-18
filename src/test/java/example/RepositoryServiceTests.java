@@ -13,7 +13,6 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(RepositoryServiceConfiguration.class)
-@ImportAutoConfiguration(RestClientAutoConfiguration.class)
 public class RepositoryServiceTests {
 	@Autowired
 	private RepositoryService repositoryService;
