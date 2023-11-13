@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Please Log In</title>
+</head>
+<body>
+<div class="container">
+</div>
+<div sec:authentication="name">
+    The value of the "name" property of the authentication object should appear here.
+</div>
+<div sec:authorize-url="/admin">
+    This will only be displayed if authenticated user can call the "/admin" URL.
+</div>
+</body>
+</html>

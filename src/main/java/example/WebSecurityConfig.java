@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -36,11 +38,16 @@ public class WebSecurityConfig {
 
 	// @formatter:off
 	@Bean
-	public DefaultSecurityFilterChain springSecurityFilter(HttpSecurity http) throws Exception {
+	public DefaultSecurityFilterChain springSecurityFilter(HttpSecurity http, HandlerMappingIntrospector hmi) throws Exception {
 		http
 			.authorizeHttpRequests(exchange -> exchange
+				.requestMatchers("/foo").permitAll()
+				.requestMatchers("/bar").permitAll()
+				.requestMatchers("/public/**").permitAll()
+				.requestMatchers("/admin/**", "/admin").denyAll()
 				.anyRequest().authenticated()
 			)
+//			.addFilterBefore(hmi.createCacheFilter(), ChannelProcessingFilter.class)
 			.formLogin(withDefaults());
 		return http.build();
 	}

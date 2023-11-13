@@ -15,14 +15,43 @@
  */
 package example;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class MessageController {
 
 	@GetMapping("/")
+	@ResponseBody
 	public String message() {
 		return "Hello Boot!";
+	}
+
+	@GetMapping(value = {"/public/forward", "/forward"})
+	String forward() {
+		return "forward:/";
+	}
+
+	@GetMapping(value = {"/public/error", "/exception"})
+	String error() {
+		throw new RuntimeException("Error");
+	}
+
+	@GetMapping(value = {"/public/include", "/include"})
+	void include(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String path = request.getParameter("p");
+		if (path == null) {
+			path = "/security";
+		}
+		request.getRequestDispatcher(path).include(request, response);
+	}
+
+	@GetMapping(value = {"/public/security", "/security"})
+	String security() {
+		return "security-test";
 	}
 }
