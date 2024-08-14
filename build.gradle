@@ -16,8 +16,18 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	testImplementation("org.springframework.experimental.boot:spring-boot-testjars:0.0.1")
+	testImplementation ('org.springframework.experimental.boot:spring-boot-testjars:0.0.1') {
+		capabilities {
+			requireCapability("org.springframework.experimental.boot:spring-boot-testjars-maven")
+		}
+	}
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {

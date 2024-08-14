@@ -1,0 +1,23 @@
+= Instructions
+
+You are likely viewing this because you have asked a question.
+This is a sample project to illustrate points made in my response.
+You can either run this from the commandline or an IDE that supports Gradle.
+
+NOTE: Be sure to use the branch that I provided in my response.
+
+== Running from the commandline
+
+To run the sample application you must have a JDK 17+ installed.
+Then you can run it using the following steps.
+
+* Navigate to the folder on the commandline
+* Execute
+
+    ./gradlew bootTestRun
+
+* Open http://localhost:8080/ in your browser
+* You will be redirect to a Spring Authorization server application that is started using https://github.com/spring-projects-experimental/spring-boot-testjars[Spring Boot TestJars]
+* You can log in with user/password
+* http://localhost:8080/login and http://localhost:8080/logout will not respond
+* To stop the container use Ctrl-C from the commandline
