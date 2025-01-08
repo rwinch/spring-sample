@@ -1,18 +1,20 @@
 Instructions
 =================
 
-Your are likely viewing this because you have submitted a forum question or a JIRA and this is a sample project to illustrate points made in my response. You can either run this from the commandline or an IDE that supports Maven (i.e. Spring Tool Suite).
+Your are likely viewing this because you had a question and this is a sample project to illustrate points made in my response.
+You can either run this from the commandline or an IDE that supports Gradle.
 
 Running from the commandline
 ---------------------------------
 
-To run the sample application you must have Maven 3 installed. After doing so you can easily run the application using the cargo plugin. Specifically:
+To run the sample application you must have Java installed.
+After doing so you can easily run the application using Gradle.
+Specifically:
 
 * Navigate to the folder on the commandline
 * Execute
 
-    mvn package spring-boot:run 
+    ./gradlew bootRun
 
-* Open http://localhost:8080/user/hello or http://localhost:8080/admin/hello in your browser
-* You can log in with user/password or admin/password (depending on the chosen URL)
+* Open http://localhost:8080/
 * To stop the container use Ctrl-C from the commandline
