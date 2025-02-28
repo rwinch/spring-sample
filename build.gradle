@@ -13,9 +13,12 @@ java {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://repo.spring.io/snapshot'}
 }
 
 dependencies {
+	testImplementation("org.springframework.experimental.boot:spring-boot-testjars-maven:0.0.3-SNAPSHOT")
+	testImplementation("org.springframework.experimental.boot:spring-boot-testjars:0.0.3-SNAPSHOT")
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
