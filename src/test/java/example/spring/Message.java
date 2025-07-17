@@ -24,8 +24,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authorization.method.AuthorizeReturnObject;
 
 @Entity
 public class Message {
@@ -43,7 +41,6 @@ public class Message {
 	@ManyToOne
 	private User to;
 
-	@AuthorizeReturnObject
 	public User getTo() {
 		return this.to;
 	}
@@ -68,7 +65,6 @@ public class Message {
 		this.created = created;
 	}
 
-	@PreAuthorize("hasAuthority('message:read')")
 	public String getText() {
 		return this.text;
 	}
@@ -77,7 +73,6 @@ public class Message {
 		this.text = text;
 	}
 
-	@PreAuthorize("hasAuthority('message:read')")
 	public String getSummary() {
 		return this.summary;
 	}

@@ -19,7 +19,6 @@ package example.spring;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * A user.
@@ -48,7 +47,6 @@ public class User {
 		this.id = id;
 	}
 
-	@PreAuthorize("hasAuthority('user:read')")
 	public String getFirstName() {
 		return this.firstName;
 	}
@@ -57,7 +55,6 @@ public class User {
 		this.firstName = firstName;
 	}
 
-	@PreAuthorize("hasAuthority('user:read')")
 	public String getLastName() {
 		return this.lastName;
 	}
