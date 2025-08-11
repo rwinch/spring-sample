@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.0-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'io.spring.nullability' version '0.0.2'
 }
 
 group = 'example'
@@ -10,7 +11,7 @@ version = '0.0.1-SNAPSHOT'
 ext['spring-framework.version'] = ext['spring.framework-version'] = '7.0.0-SNAPSHOT'
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(24)
 	}
 }
 
