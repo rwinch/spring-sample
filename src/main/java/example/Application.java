@@ -7,7 +7,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer.authorizationServer;
 
 @SpringBootApplication
 public class Application {
@@ -23,7 +22,7 @@ public class Application {
 			.authorizeHttpRequests(requests -> requests
 				.anyRequest().authenticated()
 			)
-			.with(authorizationServer(), authz -> authz
+			.oauth2AuthorizationServer(authz -> authz
 				.oidc(Customizer.withDefaults())
 			);
 		return http.build();
