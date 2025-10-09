@@ -19,13 +19,11 @@ repositories {
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
 
-ext['spring-security.version'] = '7.0.0-SNAPSHOT'
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-restclient-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

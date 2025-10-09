@@ -1,39 +1,36 @@
 package example;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.client.RestClient;
 
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ApplicationTests {
 
+	RestClient rest;
+
 	@Autowired
-	MockMvc mockMvc;
+	void setRestClient(@LocalServerPort int port, RestClient.Builder rest) {
+		this.rest = rest.baseUrl("http://localhost:"+ port +"/").build();
+	}
 
 	@Test
-	void indexNotAuthorized() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/"))
-			.andExpect(status().isUnauthorized());
+	void getMessage() throws Exception {
+	 Message message = this.rest.get()
+			.uri("/")
+			.retrieve()
+			.body(Message.class);
+
+	 assertThat(message).isEqualTo(new Message());
+
 	}
 
-	@TestConfiguration
-	static class TestConfig {
-		@Bean
-		public MockMvc mockMvc(WebApplicationContext wac) {
-			return MockMvcBuilders.webAppContextSetup(wac)
-					.apply(springSecurity())
-					.build();
-		}
-	}
 }
