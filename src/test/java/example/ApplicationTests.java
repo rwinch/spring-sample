@@ -1,11 +1,15 @@
 package example;
 
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.json.JsonAssert;
+import org.springframework.test.json.JsonContentAssert;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.client.RestClient;
@@ -40,4 +44,28 @@ class ApplicationTests {
 
 	}
 
+	@Test
+	void getActuator(@LocalServerPort int port) throws Exception {
+
+		String expectedJson = """
+				{
+				    "_links": {
+				        "health": {
+				            "href": "http://localhost:%s/actuator/health",
+				            "templated": false
+				        },
+				        "health-path": {
+				            "href": "http://localhost:%s/actuator/health/{*path}",
+				            "templated": true
+				        },
+				        "self": {
+				            "href": "http://localhost:%s/actuator",
+				            "templated": false
+				        }
+				    }
+				}
+				""".formatted(port, port, port);
+		String actualJson = this.rest.get().uri("/actuator").retrieve().body(String.class);
+		JSONAssert.assertEquals(actualJson, expectedJson, JSONCompareMode.STRICT);
+	}
 }
