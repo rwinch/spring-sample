@@ -1,0 +1,3 @@
+= Instructions
+
+Run `./gradlew check`

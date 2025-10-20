@@ -1,7 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.0-SNAPSHOT'
-	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jvm-test-suite'
 }
 
 group = 'com.example'
@@ -16,19 +15,60 @@ java {
 
 repositories {
 	mavenCentral()
-	maven { url = 'https://repo.spring.io/snapshot' }
 }
 
-ext['spring-security.version'] = '7.0.0-SNAPSHOT'
+testing {
+	suites {
+		jackson3(JvmTestSuite) {
+			dependencies {
+				implementation project()
+			}
+
+			targets {
+				all {
+					testTask.configure {
+						shouldRunAfter(test)
+					}
+				}
+			}
+		}
+
+		jackson2(JvmTestSuite) {
+			dependencies {
+				implementation project()
+			}
+
+			targets {
+				all {
+					testTask.configure {
+						shouldRunAfter(test)
+					}
+				}
+			}
+		}
+	}
+}
+
+
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	jackson3Implementation platform('org.springframework:spring-framework-bom:7.0.0-RC1')
+	jackson3Implementation platform('tools.jackson:jackson-bom:3.0.0')
+	jackson3Implementation 'org.springframework:spring-aop'
+	jackson3Implementation  'tools.jackson.core:jackson-databind'
+	jackson3Implementation platform('org.assertj:assertj-bom:3.27.6')
+	jackson3Implementation 'org.assertj:assertj-core'
+	jackson3RuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	jackson2Implementation platform('org.assertj:assertj-bom:3.27.6')
+	jackson2Implementation platform('org.springframework:spring-framework-bom:7.0.0-RC1')
+	jackson2Implementation platform('com.fasterxml.jackson:jackson-bom:2.20.0')
+	jackson2Implementation 'org.springframework:spring-aop'
+	jackson2Implementation 'com.fasterxml.jackson.core:jackson-databind'
+	jackson2Implementation 'org.assertj:assertj-core'
+	jackson2RuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+tasks.named('check') {
+	dependsOn(testing.suites.jackson2)
+	dependsOn(testing.suites.jackson3)
 }
