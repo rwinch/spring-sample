@@ -19,3 +19,5 @@ spring:
               scopes:
                 - "openid"
                 - "profile"
+server:
+  port: 80
