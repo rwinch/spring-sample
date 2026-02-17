@@ -1,0 +1,17 @@
+spring.application.name: demo
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          sample:
+            issuer-uri: # Issuer
+        registration:
+          sample:
+            client-id: # Client ID
+            client-secret: # Client Secret
+server:
+  port: 8080
+
+debug: true
