@@ -9,8 +9,8 @@ spring:
             issuer-uri: # Issuer
         registration:
           sample:
-            client-id: # Client ID
-            client-secret: # Client Secret
+            client-id: "spring"
+            client-secret: "secret"
 server:
   port: 8080
 
