@@ -8,6 +8,8 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
+ext['spring-security.version'] = '7.0.4-SNAPSHOT'
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
@@ -15,6 +17,7 @@ java {
 }
 
 repositories {
+	maven { url = 'https://repo.spring.io/snapshot' }
 	mavenCentral()
 }
 
