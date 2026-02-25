@@ -1,0 +1,33 @@
+= Demo Project for IDEA integration
+
+== How it works?
+
+IntelliJ debug support can detect the authorization rule and then set the user (just after SecurityContextHolderFilter) using something like:
+
+[source,java]
+----
+SecurityContext.setContext(new SecurityContextImpl(new TestingAuthentication("someusername", null, "ROLE_ADMIN")));
+----
+
+NOTE: If user sets bad credentials (e.g. username/password in basic auth, bad oauth token, etc) this would still cause authentication failures
+
+== Demos
+
+* Overlay for role based authority
+
+== Future IDEAS
+
+Some ideas (currently random order):
+
+* Allow Creating Personas - typically an app has various personas. They could programatically specify the personas for specifying custom users (authentiations). This might be able to be derived from their testing annotations `@WithMockAdmin`. See https://docs.spring.io/spring-security/reference/servlet/test/method.html#test-method-meta-annotations
+* Customize Authentication
+** username - typically users leverage the username (or other custom property on the principal) to find data related to the request. This means a hardcoded username is not very valuable.
+** additional authorities (not included in authorization rule)
+** custom types - for example, when using OAuth that might be used by the application to send the oauth token to downstream services
+** Custom principal - We often recommend users create their own principal and this is then resolved by the application for use
+** FactorGrantedAuthority (which includes when it was created)
+* CSRF - When CSRF is enabled, if a user performs a POST, then it will fail without a valid CSRF token. We can either disable that support using IDEA or perhaps we should generate a valid token and include in the request for them
+* Support overlay information for authorization rules with method security (perhaps not as necessary since often on the method)
+* Support authorization rules other than authority based
+* Link to the specific section of the security configuration
+* Iterate on how the authorization info is looked up and presented (perhaps a toString of something built into Spring Security)
