@@ -15,8 +15,16 @@ public class IndexPage {
     }
 
     public static IndexPage get(WebDriver driver) {
+        return get(driver, IndexPage.class);
+    }
+
+    public static <T> T get(WebDriver driver, Class<T> pageClass) {
         driver.get("http://localhost/");
-        return new IndexPage(driver);
+        try {
+            return pageClass.getDeclaredConstructor(WebDriver.class).newInstance(driver);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void assertAt() {

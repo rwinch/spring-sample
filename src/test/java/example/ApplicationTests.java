@@ -40,7 +40,7 @@ class ApplicationTests {
 
 	@Test
 	void defaultSecurityHeaders() throws Exception {
-		this.mockMvc.perform(get("/").secure(true))
+		this.mockMvc.perform(get("/login").secure(true))
 				.andExpect(status().isOk()) // The MessageController returns 200
 				.andExpect(header().string("X-Content-Type-Options", "nosniff"))
 				.andExpect(header().string("X-XSS-Protection", "0"))
@@ -82,19 +82,22 @@ class ApplicationTests {
 	}
 
 	@Test
-	void indexPageUnauthenticated(@Autowired WebDriver driver) {
-		IndexPage indexPage = IndexPage.get(driver);
-		indexPage.assertAt();
-		indexPage.assertGreeting("Hello, World!");
-	}
+	void loginRequired(@Autowired WebDriver driver) {
+		LoginPage loginPage = IndexPage.get(driver, LoginPage.class); // Attempt to go to "/"
+		loginPage.assertAt(); // Asserts it redirects to login
 
-	@Test
-	void indexPageAuthenticated(@Autowired WebDriver driver) {
-		LoginPage loginPage = LoginPage.get(driver);
-		loginPage.login("user", "password");
-
-		IndexPage indexPage = new IndexPage(driver);
+		IndexPage indexPage = loginPage.login("user", "password", IndexPage.class);
 		indexPage.assertAt();
 		indexPage.assertGreeting("Hello, user!");
+
+		LogoutPage logoutPage = LogoutPage.get(driver);
+		logoutPage.assertAt();
+		LoginPage newLoginPage = logoutPage.logout();
+
+		newLoginPage.assertAt();
+		newLoginPage.assertLogoutSuccess();
+
+		LoginPage redirectedLoginPage = IndexPage.get(driver, LoginPage.class);
+		redirectedLoginPage.assertAt();
 	}
 }

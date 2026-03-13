@@ -30,6 +30,14 @@ import org.springframework.security.web.header.writers.XContentTypeOptionsHeader
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.access.intercept.RequestMatcherDelegatingAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 public class SecurityDsl implements BeanRegistrar {
 
@@ -83,7 +91,21 @@ public class SecurityDsl implements BeanRegistrar {
         securityFilters.add(loginPageFilter);
         securityFilters.add(formLoginFilter);
         securityFilters.add(new DefaultLogoutPageGeneratingFilter());
+        securityFilters.add(new LogoutFilter("/login?logout", new SecurityContextLogoutHandler()));
 
+        ExceptionTranslationFilter exceptionTranslationFilter = new ExceptionTranslationFilter(
+                new LoginUrlAuthenticationEntryPoint("/login"));
+
+        AuthorizationManager<jakarta.servlet.http.HttpServletRequest> authorizationManager = RequestMatcherDelegatingAuthorizationManager.builder()
+                .requestMatchers(PathPatternRequestMatcher.pathPattern("/default-ui.css")).permitAll()
+                .requestMatchers(PathPatternRequestMatcher.pathPattern("/login")).permitAll()
+                .requestMatchers(PathPatternRequestMatcher.pathPattern("/logout")).permitAll()
+                .anyRequest().authenticated()
+                .build();
+        AuthorizationFilter authorizationFilter = new AuthorizationFilter(authorizationManager);
+
+        securityFilters.add(exceptionTranslationFilter);
+        securityFilters.add(authorizationFilter);
 
         FilterChainProxy springSecurityFilterChain = new FilterChainProxy(new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE, securityFilters));
         registry.registerBean("springSecurityFilterChain", FilterChainProxy.class, spec ->
