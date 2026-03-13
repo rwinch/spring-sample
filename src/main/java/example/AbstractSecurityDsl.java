@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
@@ -52,15 +53,13 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
         HttpSecurity http = new HttpSecurity();
         register(http);
 
-        InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager(
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build()
-        );
-        registry.registerBean("userDetailsService", InMemoryUserDetailsManager.class, spec ->
-                spec.supplier(context -> userDetailsService));
+        UserDetailsService userDetailsService = null;
+        if (http.getFormLogin().isEnabled()) {
+            userDetailsService = userDetailsService(http);
+            UserDetailsService finalUserDetailsService = userDetailsService;
+            registry.registerBean("userDetailsService", UserDetailsService.class, spec ->
+                    spec.supplier(context -> finalUserDetailsService));
+        }
 
         List<Filter> securityFilters = new ArrayList<>();
         
@@ -86,6 +85,20 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
                 spec.supplier(context -> springSecurityFilterChain));
     }
 
+    private UserDetailsService userDetailsService(HttpSecurity http) {
+        UserDetailsService userDetailsService = http.getFormLogin().getUserDetailsService();
+        if (userDetailsService == null) {
+            userDetailsService = new InMemoryUserDetailsManager(
+                    User.withDefaultPasswordEncoder()
+                            .username("user")
+                            .password("password")
+                            .roles("USER")
+                            .build()
+            );
+        }
+        return userDetailsService;
+    }
+
     private SecurityContextRepository securityContextRepository() {
         return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
@@ -93,7 +106,7 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
         );
     }
 
-    private AuthenticationManager authenticationManager(InMemoryUserDetailsManager userDetailsService) {
+    private AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         return new ProviderManager(authenticationProvider);
     }
