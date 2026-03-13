@@ -21,7 +21,9 @@ import org.springframework.security.web.authentication.ui.DefaultLogoutPageGener
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.header.writers.CacheControlHeadersWriter;
 import org.springframework.security.web.header.writers.HstsHeaderWriter;
 import org.springframework.security.web.header.writers.XContentTypeOptionsHeaderWriter;
@@ -51,11 +53,13 @@ public class SecurityDsl implements BeanRegistrar {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         ProviderManager authenticationManager = new ProviderManager(authenticationProvider);
 
-        UsernamePasswordAuthenticationFilter formLoginFilter = new UsernamePasswordAuthenticationFilter(authenticationManager);
-        formLoginFilter.setSecurityContextRepository(new DelegatingSecurityContextRepository(
+        DelegatingSecurityContextRepository securityContextRepository = new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
                 new HttpSessionSecurityContextRepository()
-        ));
+        );
+
+        UsernamePasswordAuthenticationFilter formLoginFilter = new UsernamePasswordAuthenticationFilter(authenticationManager);
+        formLoginFilter.setSecurityContextRepository(securityContextRepository);
         formLoginFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"));
 
         DefaultLoginPageGeneratingFilter loginPageFilter = new DefaultLoginPageGeneratingFilter();
@@ -67,6 +71,15 @@ public class SecurityDsl implements BeanRegistrar {
         loginPageFilter.setFailureUrl("/login?error");
         loginPageFilter.setAuthenticationUrl("/login");
 
+        SecurityContextHolderAwareRequestFilter requestAwareFilter = new SecurityContextHolderAwareRequestFilter();
+        try {
+            requestAwareFilter.afterPropertiesSet();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        securityFilters.add(new SecurityContextHolderFilter(securityContextRepository));
+        securityFilters.add(requestAwareFilter);
         securityFilters.add(loginPageFilter);
         securityFilters.add(formLoginFilter);
         securityFilters.add(new DefaultLogoutPageGeneratingFilter());

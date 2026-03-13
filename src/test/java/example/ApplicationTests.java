@@ -80,4 +80,21 @@ class ApplicationTests {
 		loginPage.login("user", "invalid");
 		loginPage.assertError();
 	}
+
+	@Test
+	void indexPageUnauthenticated(@Autowired WebDriver driver) {
+		IndexPage indexPage = IndexPage.get(driver);
+		indexPage.assertAt();
+		indexPage.assertGreeting("Hello, World!");
+	}
+
+	@Test
+	void indexPageAuthenticated(@Autowired WebDriver driver) {
+		LoginPage loginPage = LoginPage.get(driver);
+		loginPage.login("user", "password");
+
+		IndexPage indexPage = new IndexPage(driver);
+		indexPage.assertAt();
+		indexPage.assertGreeting("Hello, user!");
+	}
 }
