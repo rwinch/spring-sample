@@ -10,12 +10,9 @@ import org.springframework.beans.factory.BeanRegistry;
 import org.springframework.core.env.Environment;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
-import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
-@Component
 public class SecurityDsl implements BeanRegistrar {
 
     public void register(BeanRegistry registry, Environment env) {
