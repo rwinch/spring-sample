@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -105,5 +107,12 @@ class ApplicationTests {
 	void cssReturns200() throws Exception {
 		this.mockMvc.perform(get("/default-ui.css"))
 				.andExpect(status().isOk());
+	}
+
+	@Test
+	void userDetailsServiceIsRegistered(@Autowired UserDetailsService userDetailsService) {
+		UserDetails user = userDetailsService.loadUserByUsername("user");
+		assertThat(user).isNotNull();
+		assertThat(user.getUsername()).isEqualTo("user");
 	}
 }

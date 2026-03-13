@@ -52,6 +52,16 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
         HttpSecurity http = new HttpSecurity();
         register(http);
 
+        InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager(
+                User.withDefaultPasswordEncoder()
+                        .username("user")
+                        .password("password")
+                        .roles("USER")
+                        .build()
+        );
+        registry.registerBean("userDetailsService", InMemoryUserDetailsManager.class, spec ->
+                spec.supplier(context -> userDetailsService));
+
         List<Filter> securityFilters = new ArrayList<>();
         
         SecurityContextRepository securityContextRepository = securityContextRepository();
@@ -63,7 +73,7 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
         if (http.isFormLogin()) {
             securityFilters.add(defaultResourcesFilter());
             securityFilters.add(loginPageGeneratingFilter());
-            securityFilters.add(usernamePasswordAuthenticationFilter(authenticationManager(), securityContextRepository));
+            securityFilters.add(usernamePasswordAuthenticationFilter(authenticationManager(userDetailsService), securityContextRepository));
             securityFilters.add(logoutPageGeneratingFilter());
             securityFilters.add(logoutFilter());
         }
@@ -83,14 +93,7 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
         );
     }
 
-    private AuthenticationManager authenticationManager() {
-        InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager(
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build()
-        );
+    private AuthenticationManager authenticationManager(InMemoryUserDetailsManager userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         return new ProviderManager(authenticationProvider);
     }
