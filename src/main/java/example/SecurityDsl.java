@@ -4,6 +4,6 @@ public class SecurityDsl extends AbstractSecurityDsl {
 
     @Override
     public void register(HttpSecurity http) {
-        http.setFormLogin(true);
+        http.formLogin(formLogin -> formLogin.setEnabled(true));
     }
 }

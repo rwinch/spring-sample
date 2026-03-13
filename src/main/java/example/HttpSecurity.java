@@ -1,13 +1,16 @@
 package example;
 
-public class HttpSecurity {
-    private boolean formLogin = true;
+import java.util.function.Consumer;
 
-    public boolean isFormLogin() {
+public class HttpSecurity {
+    private FormLogin formLogin = new FormLogin();
+
+    FormLogin getFormLogin() {
         return formLogin;
     }
 
-    public void setFormLogin(boolean formLogin) {
-        this.formLogin = formLogin;
+    public HttpSecurity formLogin(Consumer<FormLogin> formLoginCustomizer) {
+        formLoginCustomizer.accept(this.formLogin);
+        return this;
     }
 }

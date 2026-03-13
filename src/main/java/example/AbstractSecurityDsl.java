@@ -70,7 +70,7 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
         securityFilters.add(securityContextHolderFilter(securityContextRepository));
         securityFilters.add(securityContextHolderAwareRequestFilter());
         
-        if (http.isFormLogin()) {
+        if (http.getFormLogin().isEnabled()) {
             securityFilters.add(defaultResourcesFilter());
             securityFilters.add(loginPageGeneratingFilter());
             securityFilters.add(usernamePasswordAuthenticationFilter(authenticationManager(userDetailsService), securityContextRepository));
@@ -154,7 +154,7 @@ public abstract class AbstractSecurityDsl implements BeanRegistrar {
     }
 
     private ExceptionTranslationFilter exceptionTranslationFilter(HttpSecurity http) {
-        AuthenticationEntryPoint entryPoint = http.isFormLogin() ? 
+        AuthenticationEntryPoint entryPoint = http.getFormLogin().isEnabled() ? 
                 new LoginUrlAuthenticationEntryPoint("/login") : 
                 new Http403ForbiddenEntryPoint();
         return new ExceptionTranslationFilter(entryPoint);

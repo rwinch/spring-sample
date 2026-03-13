@@ -27,7 +27,7 @@ class FormLoginDisabledTests {
 	static class NoFormLoginSecurityDsl extends AbstractSecurityDsl {
 		@Override
 		public void register(HttpSecurity http) {
-			http.setFormLogin(false);
+			http.formLogin(formLogin -> formLogin.setEnabled(false));
 		}
 	}
 
