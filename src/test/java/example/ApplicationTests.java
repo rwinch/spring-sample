@@ -1,6 +1,8 @@
 package example;
 
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -59,5 +61,14 @@ class ApplicationTests {
 	void formLoginFails() throws Exception {
 		this.mockMvc.perform(formLogin().password("invalid"))
 				.andExpect(unauthenticated());
+	}
+
+	@Test
+	void loginPageIsGenerated(@Autowired WebDriver driver) throws Exception {
+		LoginPage loginPage = LoginPage.get(driver);
+		loginPage.assertAt();
+
+		loginPage.login("user", "password");
+		assertThat(driver.getCurrentUrl()).endsWith("/"); // Successfully redirects to root
 	}
 }

@@ -56,9 +56,19 @@ public class SecurityDsl implements BeanRegistrar {
                 new HttpSessionSecurityContextRepository()
         ));
 
+        DefaultLoginPageGeneratingFilter loginPageFilter = new DefaultLoginPageGeneratingFilter();
+        loginPageFilter.setFormLoginEnabled(true);
+        loginPageFilter.setUsernameParameter("username");
+        loginPageFilter.setPasswordParameter("password");
+        loginPageFilter.setLoginPageUrl("/login");
+        loginPageFilter.setLogoutSuccessUrl("/login?logout");
+        loginPageFilter.setFailureUrl("/login?error");
+        loginPageFilter.setAuthenticationUrl("/login");
+
+        securityFilters.add(loginPageFilter);
         securityFilters.add(formLoginFilter);
-        securityFilters.add(new DefaultLoginPageGeneratingFilter(formLoginFilter));
         securityFilters.add(new DefaultLogoutPageGeneratingFilter());
+
 
         FilterChainProxy springSecurityFilterChain = new FilterChainProxy(new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE, securityFilters));
         registry.registerBean("springSecurityFilterChain", FilterChainProxy.class, spec ->

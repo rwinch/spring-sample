@@ -26,6 +26,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.seleniumhq.selenium:htmlunit3-driver'
+	testImplementation 'org.seleniumhq.selenium:selenium-java'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
