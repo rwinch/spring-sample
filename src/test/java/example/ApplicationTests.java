@@ -71,4 +71,13 @@ class ApplicationTests {
 		loginPage.login("user", "password");
 		assertThat(driver.getCurrentUrl()).endsWith("/"); // Successfully redirects to root
 	}
+
+	@Test
+	void loginPageInvalidCredentials(@Autowired WebDriver driver) throws Exception {
+		LoginPage loginPage = LoginPage.get(driver);
+		loginPage.assertAt();
+
+		loginPage.login("user", "invalid");
+		loginPage.assertError();
+	}
 }

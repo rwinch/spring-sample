@@ -23,6 +23,10 @@ public class LoginPage {
         assertThat(this.driver.getTitle()).isEqualTo("Please sign in");
     }
 
+    public void assertError() {
+        assertThat(this.driver.getPageSource()).contains("Invalid credentials");
+    }
+
     public void login(String username, String password) {
         WebElement usernameInput = this.driver.findElement(By.cssSelector("input[name=\"username\"]"));
         WebElement passwordInput = this.driver.findElement(By.cssSelector("input[name=\"password\"]"));
