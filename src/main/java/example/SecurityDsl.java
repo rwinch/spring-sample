@@ -8,6 +8,7 @@ import jakarta.servlet.Filter;
 import org.springframework.beans.factory.BeanRegistrar;
 import org.springframework.beans.factory.BeanRegistry;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.User;
@@ -22,6 +23,7 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.header.writers.CacheControlHeadersWriter;
@@ -43,14 +45,32 @@ public class SecurityDsl implements BeanRegistrar {
 
     public void register(BeanRegistry registry, Environment env) {
         List<Filter> securityFilters = new ArrayList<>();
-        securityFilters.add(new HeaderWriterFilter(List.of(
-            new XContentTypeOptionsHeaderWriter(),
-            new XXssProtectionHeaderWriter(),
-            new CacheControlHeadersWriter(),
-            new HstsHeaderWriter(),
-            new XFrameOptionsHeaderWriter()
-        )));
+        
+        SecurityContextRepository securityContextRepository = securityContextRepository();
 
+        securityFilters.add(headerWriterFilter());
+        securityFilters.add(securityContextHolderFilter(securityContextRepository));
+        securityFilters.add(securityContextHolderAwareRequestFilter());
+        securityFilters.add(loginPageGeneratingFilter());
+        securityFilters.add(usernamePasswordAuthenticationFilter(authenticationManager(), securityContextRepository));
+        securityFilters.add(logoutPageGeneratingFilter());
+        securityFilters.add(logoutFilter());
+        securityFilters.add(exceptionTranslationFilter());
+        securityFilters.add(authorizationFilter());
+
+        FilterChainProxy springSecurityFilterChain = new FilterChainProxy(new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE, securityFilters));
+        registry.registerBean("springSecurityFilterChain", FilterChainProxy.class, spec ->
+                spec.supplier(context -> springSecurityFilterChain));
+    }
+
+    private SecurityContextRepository securityContextRepository() {
+        return new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(),
+                new HttpSessionSecurityContextRepository()
+        );
+    }
+
+    private AuthenticationManager authenticationManager() {
         InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager(
                 User.withDefaultPasswordEncoder()
                         .username("user")
@@ -59,17 +79,34 @@ public class SecurityDsl implements BeanRegistrar {
                         .build()
         );
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
-        ProviderManager authenticationManager = new ProviderManager(authenticationProvider);
+        return new ProviderManager(authenticationProvider);
+    }
 
-        DelegatingSecurityContextRepository securityContextRepository = new DelegatingSecurityContextRepository(
-                new RequestAttributeSecurityContextRepository(),
-                new HttpSessionSecurityContextRepository()
-        );
+    private HeaderWriterFilter headerWriterFilter() {
+        return new HeaderWriterFilter(List.of(
+            new XContentTypeOptionsHeaderWriter(),
+            new XXssProtectionHeaderWriter(),
+            new CacheControlHeadersWriter(),
+            new HstsHeaderWriter(),
+            new XFrameOptionsHeaderWriter()
+        ));
+    }
 
-        UsernamePasswordAuthenticationFilter formLoginFilter = new UsernamePasswordAuthenticationFilter(authenticationManager);
-        formLoginFilter.setSecurityContextRepository(securityContextRepository);
-        formLoginFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"));
+    private SecurityContextHolderFilter securityContextHolderFilter(SecurityContextRepository securityContextRepository) {
+        return new SecurityContextHolderFilter(securityContextRepository);
+    }
 
+    private SecurityContextHolderAwareRequestFilter securityContextHolderAwareRequestFilter() {
+        SecurityContextHolderAwareRequestFilter requestAwareFilter = new SecurityContextHolderAwareRequestFilter();
+        try {
+            requestAwareFilter.afterPropertiesSet();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return requestAwareFilter;
+    }
+
+    private DefaultLoginPageGeneratingFilter loginPageGeneratingFilter() {
         DefaultLoginPageGeneratingFilter loginPageFilter = new DefaultLoginPageGeneratingFilter();
         loginPageFilter.setFormLoginEnabled(true);
         loginPageFilter.setUsernameParameter("username");
@@ -78,38 +115,36 @@ public class SecurityDsl implements BeanRegistrar {
         loginPageFilter.setLogoutSuccessUrl("/login?logout");
         loginPageFilter.setFailureUrl("/login?error");
         loginPageFilter.setAuthenticationUrl("/login");
+        return loginPageFilter;
+    }
 
-        SecurityContextHolderAwareRequestFilter requestAwareFilter = new SecurityContextHolderAwareRequestFilter();
-        try {
-            requestAwareFilter.afterPropertiesSet();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private UsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, SecurityContextRepository securityContextRepository) {
+        UsernamePasswordAuthenticationFilter formLoginFilter = new UsernamePasswordAuthenticationFilter(authenticationManager);
+        formLoginFilter.setSecurityContextRepository(securityContextRepository);
+        formLoginFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"));
+        return formLoginFilter;
+    }
 
-        securityFilters.add(new SecurityContextHolderFilter(securityContextRepository));
-        securityFilters.add(requestAwareFilter);
-        securityFilters.add(loginPageFilter);
-        securityFilters.add(formLoginFilter);
-        securityFilters.add(new DefaultLogoutPageGeneratingFilter());
-        securityFilters.add(new LogoutFilter("/login?logout", new SecurityContextLogoutHandler()));
+    private DefaultLogoutPageGeneratingFilter logoutPageGeneratingFilter() {
+        return new DefaultLogoutPageGeneratingFilter();
+    }
 
-        ExceptionTranslationFilter exceptionTranslationFilter = new ExceptionTranslationFilter(
-                new LoginUrlAuthenticationEntryPoint("/login"));
+    private LogoutFilter logoutFilter() {
+        return new LogoutFilter("/login?logout", new SecurityContextLogoutHandler());
+    }
 
+    private ExceptionTranslationFilter exceptionTranslationFilter() {
+        return new ExceptionTranslationFilter(new LoginUrlAuthenticationEntryPoint("/login"));
+    }
+
+    private AuthorizationFilter authorizationFilter() {
         AuthorizationManager<jakarta.servlet.http.HttpServletRequest> authorizationManager = RequestMatcherDelegatingAuthorizationManager.builder()
                 .requestMatchers(PathPatternRequestMatcher.pathPattern("/default-ui.css")).permitAll()
                 .requestMatchers(PathPatternRequestMatcher.pathPattern("/login")).permitAll()
                 .requestMatchers(PathPatternRequestMatcher.pathPattern("/logout")).permitAll()
                 .anyRequest().authenticated()
                 .build();
-        AuthorizationFilter authorizationFilter = new AuthorizationFilter(authorizationManager);
-
-        securityFilters.add(exceptionTranslationFilter);
-        securityFilters.add(authorizationFilter);
-
-        FilterChainProxy springSecurityFilterChain = new FilterChainProxy(new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE, securityFilters));
-        registry.registerBean("springSecurityFilterChain", FilterChainProxy.class, spec ->
-                spec.supplier(context -> springSecurityFilterChain));
+        return new AuthorizationFilter(authorizationManager);
     }
 
 }
