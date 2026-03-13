@@ -9,6 +9,9 @@ import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,5 +47,17 @@ class ApplicationTests {
 				.andExpect(header().string("Expires", "0"))
 				.andExpect(header().exists("Strict-Transport-Security")) // Will match something like "max-age=31536000 ; includeSubDomains"
 				.andExpect(header().string("X-Frame-Options", "DENY"));
+	}
+
+	@Test
+	void formLoginWorks() throws Exception {
+		this.mockMvc.perform(formLogin())
+				.andExpect(authenticated().withUsername("user").withRoles("USER"));
+	}
+
+	@Test
+	void formLoginFails() throws Exception {
+		this.mockMvc.perform(formLogin().password("invalid"))
+				.andExpect(unauthenticated());
 	}
 }
