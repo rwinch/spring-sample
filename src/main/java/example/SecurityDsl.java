@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter;
+import org.springframework.security.web.authentication.ui.DefaultResourcesFilter;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
@@ -51,6 +52,7 @@ public class SecurityDsl implements BeanRegistrar {
         securityFilters.add(headerWriterFilter());
         securityFilters.add(securityContextHolderFilter(securityContextRepository));
         securityFilters.add(securityContextHolderAwareRequestFilter());
+        securityFilters.add(defaultResourcesFilter());
         securityFilters.add(loginPageGeneratingFilter());
         securityFilters.add(usernamePasswordAuthenticationFilter(authenticationManager(), securityContextRepository));
         securityFilters.add(logoutPageGeneratingFilter());
@@ -104,6 +106,10 @@ public class SecurityDsl implements BeanRegistrar {
             throw new RuntimeException(e);
         }
         return requestAwareFilter;
+    }
+
+    private DefaultResourcesFilter defaultResourcesFilter() {
+        return DefaultResourcesFilter.css();
     }
 
     private DefaultLoginPageGeneratingFilter loginPageGeneratingFilter() {

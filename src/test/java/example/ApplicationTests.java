@@ -100,4 +100,10 @@ class ApplicationTests {
 		LoginPage redirectedLoginPage = IndexPage.get(driver, LoginPage.class);
 		redirectedLoginPage.assertAt();
 	}
+
+	@Test
+	void cssReturns200() throws Exception {
+		this.mockMvc.perform(get("/default-ui.css"))
+				.andExpect(status().isOk());
+	}
 }
