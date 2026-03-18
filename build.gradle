@@ -8,7 +8,8 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
-ext['spring-security.version'] = '7.1.0-SNAPSHOT'
+// No Boot release with fix for https://github.com/spring-projects/spring-security/pull/18834
+ext['spring-security.version'] = '7.0.4'
 
 java {
 	toolchain {
