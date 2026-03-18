@@ -66,9 +66,9 @@ public class Application {
 
         @Override
         public @Nullable AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authn, T object) {
-            AuthorizationResult mfaOrWebauthn = this.hasMfaOrWebauthnFactor.authorize(authn, object);
-            if (mfaOrWebauthn.isGranted()) {
-                return mfaOrWebauthn;
+            AuthorizationResult webauthnResult = this.requiresWebauthn.authorize(authn, object);
+            if (webauthnResult.isGranted()) {
+                return webauthnResult;
             }
             if (webauthnRegistered(authn.get())) {
                 return this.requiresPasswordOttWebauthnFactors.authorize(authn, object);
@@ -93,11 +93,9 @@ public class Application {
                 .requireFactor(RequiredFactor.Builder::ottAuthority)
                 .build();
 
-        private final AuthorizationManager<T> hasMfaOrWebauthnFactor = AuthorizationManagers.anyOf(
-                AllRequiredFactorsAuthorizationManager.<T>builder()
+        private final AuthorizationManager<T> requiresWebauthn = AllRequiredFactorsAuthorizationManager.<T>builder()
                         .requireFactor(RequiredFactor.Builder::webauthnAuthority)
-                        .build(),
-                requiresPasswordOttFactors);
+                        .build();
 
         public final AuthorizationManager<T> requiresPasswordOttWebauthnFactors = AllRequiredFactorsAuthorizationManager.<T>builder()
                 .requireFactor(RequiredFactor.Builder::passwordAuthority)
