@@ -1,26 +1,32 @@
 package example;
 
-import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authorization.AuthorityAuthorizationManager;
-import org.springframework.security.authorization.AuthorizationManagerFactories;
-import org.springframework.security.authorization.AuthorizationManagerFactories.AdditionalRequiredFactorsBuilder;
+import org.springframework.security.authorization.AllRequiredFactorsAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManagers;
+import org.springframework.security.authorization.AuthorizationResult;
+import org.springframework.security.authorization.DefaultAuthorizationManagerFactory;
+import org.springframework.security.authorization.RequiredFactor;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authorization.EnableMultiFactorAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.authority.FactorGrantedAuthority;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasAuthority;
+import org.springframework.security.web.webauthn.api.PublicKeyCredentialUserEntity;
+import org.springframework.security.web.webauthn.management.MapPublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.MapUserCredentialRepository;
+import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.UserCredentialRepository;
 
 @SpringBootApplication
-@EnableMultiFactorAuthentication(authorities = { FactorGrantedAuthority.OTT_AUTHORITY, FactorGrantedAuthority.PASSWORD_AUTHORITY})
+@EnableMultiFactorAuthentication(authorities = {})
 public class Application {
 
     @Bean
@@ -45,11 +51,73 @@ public class Application {
     }
 
     @Bean
-    Customizer<AdditionalRequiredFactorsBuilder<Object>> mfa() {
-        AuthorityAuthorizationManager<Object> webauthn = hasAuthority(FactorGrantedAuthority.WEBAUTHN_AUTHORITY);
-        Predicate<Authentication> notWebauthn = (a) -> !webauthn.authorize(() -> a, "").isGranted();
-        return (mfa) -> mfa
-            .when(notWebauthn);
+    public PublicKeyCredentialUserEntityRepository userEntityRepository() {
+        return new MapPublicKeyCredentialUserEntityRepository();
+    }
+
+    @Bean
+    DefaultAuthorizationManagerFactory<Object> mfa(PublicKeyCredentialUserEntityRepository userEntities, UserCredentialRepository userCreds) {
+        DefaultAuthorizationManagerFactory<Object> mfa = new DefaultAuthorizationManagerFactory<>();
+        mfa.setAdditionalAuthorization(new WebauthnOrMfaAuthorizationManager<>(userEntities, userCreds));
+        return mfa;
+    }
+
+    private static class WebauthnOrMfaAuthorizationManager<T> implements AuthorizationManager<T> {
+
+        @Override
+        public @Nullable AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authn, T object) {
+            AuthorizationResult mfaOrWebauthn = this.hasMfaOrWebauthnFactor.authorize(authn, object);
+            if (mfaOrWebauthn.isGranted()) {
+                return mfaOrWebauthn;
+            }
+            if (webauthnRegistered(authn.get())) {
+                return this.requiresPasswordOttWebauthnFactors.authorize(authn, object);
+            }
+            return this.requiresPasswordOttFactors.authorize(authn, object);
+        }
+
+        public boolean webauthnRegistered(Authentication authentication) {
+            if (authentication == null || authentication.getName() == null) {
+                return false;
+            }
+            PublicKeyCredentialUserEntity userEntity = this.userEntities
+                    .findByUsername(authentication.getName());
+            if (userEntity == null) {
+                return false;
+            }
+            return !this.userCredentials.findByUserId(userEntity.getId()).isEmpty();
+        }
+
+        private final AuthorizationManager<T> requiresPasswordOttFactors =  AllRequiredFactorsAuthorizationManager.<T>builder()
+                .requireFactor(RequiredFactor.Builder::passwordAuthority)
+                .requireFactor(RequiredFactor.Builder::ottAuthority)
+                .build();
+
+        private final AuthorizationManager<T> hasMfaOrWebauthnFactor = AuthorizationManagers.anyOf(
+                AllRequiredFactorsAuthorizationManager.<T>builder()
+                        .requireFactor(RequiredFactor.Builder::webauthnAuthority)
+                        .build(),
+                requiresPasswordOttFactors);
+
+        public final AuthorizationManager<T> requiresPasswordOttWebauthnFactors = AllRequiredFactorsAuthorizationManager.<T>builder()
+                .requireFactor(RequiredFactor.Builder::passwordAuthority)
+                .requireFactor(RequiredFactor.Builder::ottAuthority)
+                .requireFactor(RequiredFactor.Builder::webauthnAuthority)
+                .build();
+
+        final PublicKeyCredentialUserEntityRepository userEntities;
+
+        final UserCredentialRepository userCredentials;
+
+        private WebauthnOrMfaAuthorizationManager(PublicKeyCredentialUserEntityRepository userEntities, UserCredentialRepository userCredentials) {
+            this.userEntities = userEntities;
+            this.userCredentials = userCredentials;
+        }
+    }
+
+    @Bean
+    public UserCredentialRepository userCredentialRepository() {
+        return new MapUserCredentialRepository();
     }
 
 	public static void main(String[] args) {
