@@ -1,5 +1,8 @@
 package example;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.jspecify.annotations.Nullable;
@@ -10,10 +13,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authorization.AllRequiredFactorsAuthorizationManager;
 import org.springframework.security.authorization.AuthorizationManager;
-import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.authorization.DefaultAuthorizationManagerFactory;
+import org.springframework.security.authorization.FactorAuthorizationDecision;
 import org.springframework.security.authorization.RequiredFactor;
+import org.springframework.security.authorization.RequiredFactorError;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authorization.EnableMultiFactorAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +28,7 @@ import org.springframework.security.web.webauthn.management.MapPublicKeyCredenti
 import org.springframework.security.web.webauthn.management.MapUserCredentialRepository;
 import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
 import org.springframework.security.web.webauthn.management.UserCredentialRepository;
+import org.springframework.util.Assert;
 
 @SpringBootApplication
 @EnableMultiFactorAuthentication(authorities = {})
@@ -62,6 +67,29 @@ public class Application {
         return mfa;
     }
 
+    private static class AnyFactorAuthorizationManager<T> implements AuthorizationManager<T> {
+
+        private final List<AllRequiredFactorsAuthorizationManager<T>> factors;
+
+        public AnyFactorAuthorizationManager(AllRequiredFactorsAuthorizationManager<T>... factors) {
+            Assert.notEmpty(factors, "factors cannot be empty");
+            this.factors = Arrays.asList(factors);
+        }
+
+        @Override
+        public AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authentication, T object) {
+            List<RequiredFactorError> factorErrors = new ArrayList<>();
+            for (AllRequiredFactorsAuthorizationManager<T> factor : this.factors) {
+                FactorAuthorizationDecision result = factor.authorize(authentication, object);
+                if (result.isGranted()) {
+                    return result;
+                }
+                factorErrors.addAll(result.getFactorErrors());
+            }
+            return new FactorAuthorizationDecision(factorErrors);
+        }
+    }
+
     private static class WebauthnOrMfaAuthorizationManager<T> implements AuthorizationManager<T> {
 
         @Override
@@ -71,7 +99,7 @@ public class Application {
                 return webauthnResult;
             }
             if (webauthnRegistered(authn.get())) {
-                return this.requiresPasswordOttWebauthnFactors.authorize(authn, object);
+                return this.requiresPasswordOttOrWebauthnFactors.authorize(authn, object);
             }
             return this.requiresPasswordOttFactors.authorize(authn, object);
         }
@@ -88,20 +116,16 @@ public class Application {
             return !this.userCredentials.findByUserId(userEntity.getId()).isEmpty();
         }
 
-        private final AuthorizationManager<T> requiresPasswordOttFactors =  AllRequiredFactorsAuthorizationManager.<T>builder()
+        private final AllRequiredFactorsAuthorizationManager<T> requiresPasswordOttFactors =  AllRequiredFactorsAuthorizationManager.<T>builder()
                 .requireFactor(RequiredFactor.Builder::passwordAuthority)
                 .requireFactor(RequiredFactor.Builder::ottAuthority)
                 .build();
 
-        private final AuthorizationManager<T> requiresWebauthn = AllRequiredFactorsAuthorizationManager.<T>builder()
+        private final AllRequiredFactorsAuthorizationManager<T> requiresWebauthn = AllRequiredFactorsAuthorizationManager.<T>builder()
                         .requireFactor(RequiredFactor.Builder::webauthnAuthority)
                         .build();
 
-        public final AuthorizationManager<T> requiresPasswordOttWebauthnFactors = AllRequiredFactorsAuthorizationManager.<T>builder()
-                .requireFactor(RequiredFactor.Builder::passwordAuthority)
-                .requireFactor(RequiredFactor.Builder::ottAuthority)
-                .requireFactor(RequiredFactor.Builder::webauthnAuthority)
-                .build();
+        public final AuthorizationManager<T> requiresPasswordOttOrWebauthnFactors = new AnyFactorAuthorizationManager<>(this.requiresPasswordOttFactors, this.requiresWebauthn);
 
         final PublicKeyCredentialUserEntityRepository userEntities;
 
