@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 // No Boot release with fix for https://github.com/spring-projects/spring-security/pull/18834
-ext['spring-security.version'] = '7.0.4'
+ext['spring-security.version'] = '7.1.0-SNAPSHOT'
 
 java {
 	toolchain {

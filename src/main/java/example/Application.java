@@ -67,28 +67,6 @@ public class Application {
         return mfa;
     }
 
-    private static class AnyFactorAuthorizationManager<T> implements AuthorizationManager<T> {
-
-        private final List<AllRequiredFactorsAuthorizationManager<T>> factors;
-
-        public AnyFactorAuthorizationManager(AllRequiredFactorsAuthorizationManager<T>... factors) {
-            Assert.notEmpty(factors, "factors cannot be empty");
-            this.factors = Arrays.asList(factors);
-        }
-
-        @Override
-        public AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authentication, T object) {
-            List<RequiredFactorError> factorErrors = new ArrayList<>();
-            for (AllRequiredFactorsAuthorizationManager<T> factor : this.factors) {
-                FactorAuthorizationDecision result = factor.authorize(authentication, object);
-                if (result.isGranted()) {
-                    return result;
-                }
-                factorErrors.addAll(result.getFactorErrors());
-            }
-            return new FactorAuthorizationDecision(factorErrors);
-        }
-    }
 
     private static class WebauthnOrMfaAuthorizationManager<T> implements AuthorizationManager<T> {
 
@@ -125,7 +103,7 @@ public class Application {
                         .requireFactor(RequiredFactor.Builder::webauthnAuthority)
                         .build();
 
-        public final AuthorizationManager<T> requiresPasswordOttOrWebauthnFactors = new AnyFactorAuthorizationManager<>(this.requiresPasswordOttFactors, this.requiresWebauthn);
+        public final AuthorizationManager<T> requiresPasswordOttOrWebauthnFactors = AllRequiredFactorsAuthorizationManager.anyOf(this.requiresPasswordOttFactors, this.requiresWebauthn);
 
         final PublicKeyCredentialUserEntityRepository userEntities;
 
